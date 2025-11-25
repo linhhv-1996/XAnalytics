@@ -18,6 +18,8 @@
   import TopicsBreakdown from "$lib/components/analytics/TopicsBreakdown.svelte";
   import BestTimeToPost from "$lib/components/analytics/BestTimeToPost.svelte";
   import AICommandCenter from "$lib/components/analytics/AIWriting.svelte";
+    import ConsistencyCheck from "$lib/components/analytics/ConsistencyCheck.svelte";
+    import ContentMix from "$lib/components/analytics/ContentMix.svelte";
 
   // State
   let isLoading = true;
@@ -188,10 +190,16 @@
 
       <!-- <SponsorToolsCards sponsors={data.sponsors} /> -->
 
+      <div class="grid md:grid-cols-1 gap-6"> 
+          <ConsistencyCheck data={data.consistency} />
+      </div>
+
       <div class="grid md:grid-cols-2 gap-6">
         <Archetype archetype={data.archetype} />
         <FormatBreakdown formats={data.formats} />
       </div>
+
+      <ContentMix data={data.contentMix} />
 
       <TopicsBreakdown topics={data.topics} />
       <BestTimeToPost bestTime={data.bestTime} />

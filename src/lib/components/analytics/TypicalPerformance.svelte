@@ -44,7 +44,7 @@
             <p
                 class="text-[10px] uppercase tracking-wide text-slate-400 mb-1 flex items-center gap-1"
             >
-                Speed of engagement
+                Engagement Rate
                 <i
                     class="fa-solid fa-circle-info text-[11px] text-slate-400"
                     title="Rough speed of likes + reposts in the first hours after posting."

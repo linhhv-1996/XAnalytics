@@ -74,6 +74,18 @@ export interface AnalyticsData {
     formats: FormatStat[];
     topics: TopicStat[];
     bestTime: BestTimeResult;
+    consistency: {
+        totalDays: number;
+        activeDays: number;
+        postsPerDay: string;
+        heatmap: { date: string; count: number; level: number }[];
+        streak: number;
+    };
+    contentMix: {
+        hashtags: { text: string; count: number }[];
+        mentions: { handle: string; count: number }[];
+        keywords: { text: string; count: number }[];
+    };
 }
 
 
@@ -104,5 +116,19 @@ export interface ArchetypeResult {
     aggression: number;
     polarization: number;
     description: string;
+}
+
+export interface ConsistencyMetrics {
+    totalDays: number;
+    activeDays: number;
+    postsPerDay: string;
+    heatmap: { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }[];
+    streak: number;
+}
+
+export interface ContentMix {
+    hashtags: { text: string; count: number }[];
+    mentions: { handle: string; count: number }[]; // Cái này là "Lite Network"
+    keywords: { text: string; count: number }[];
 }
 

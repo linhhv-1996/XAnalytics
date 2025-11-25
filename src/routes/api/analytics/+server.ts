@@ -2,7 +2,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { fetchTwitterData } from '$lib/server/twitter';
-import { calculateEngagement, calculateViralRatio, assignGrade, calculateTypicalPerformance, getOutliers, calculateBestTimeToPost, calculateTopicStats } from '$lib/server/analytics-utils';
+import { calculateEngagement, calculateViralRatio, assignGrade, calculateTypicalPerformance, getOutliers, calculateBestTimeToPost, calculateTopicStats, calculateConsistency, analyzeContentMix } from '$lib/server/analytics-utils';
 import { analyzeArchetype, analyzePinnedPost, analyzeTopics } from '$lib/server/gemini';
 import type { AnalyticsData } from '$lib/types';
 
@@ -66,6 +66,10 @@ export const GET: RequestHandler = async ({ url }) => {
             performanceMetrics.rawMedianViews ?? 0
         );
 
+
+        const consistency = calculateConsistency(tweets);
+        const contentMix = analyzeContentMix(tweets);
+
         
         // 3. Map vào đúng Interface của Frontend
         // Lưu ý: Các phần chưa implement (pinnedPost, outliers...) ta tạm để mock hoặc null
@@ -113,6 +117,8 @@ export const GET: RequestHandler = async ({ url }) => {
         ],
         topics: topicStats,
         bestTime: bestTime,
+        consistency: consistency,
+        contentMix: contentMix,
         };
 
         return json(responseData);

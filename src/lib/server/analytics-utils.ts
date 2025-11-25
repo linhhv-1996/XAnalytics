@@ -1,5 +1,5 @@
 // src/lib/server/analytics-utils.ts
-import type { AnalyzedTopic, BestTimeResult, OutlierPost, TopicStat } from '$lib/types';
+import type { AnalyzedTopic, BestTimeResult, ConsistencyMetrics, ContentMix, OutlierPost, TopicStat } from '$lib/types';
 import type { Tweet } from './twitter';
 
 // 1. Tính Engagement Rate trung bình
@@ -92,7 +92,8 @@ export function calculateTypicalPerformance(
     });
 
     // Lấy tối đa 30 bài organic gần nhất
-    const recentTweets = validTweets.slice(0, 30);
+    // const recentTweets = validTweets.slice(0, 30);
+    const recentTweets = validTweets;
     
     if (recentTweets.length === 0) {
         return { avgViews: "0", avgLikes: "0", avgReposts: "0", speedOfEngagement: "0%" };
@@ -412,4 +413,125 @@ export function calculateTopicStats(
 }
 
 
+
+
+export function calculateConsistency(tweets: Tweet[]): ConsistencyMetrics {
+    if (!tweets.length) return { totalDays: 30, activeDays: 0, postsPerDay: "0", heatmap: [], streak: 0 };
+
+    // Map số bài theo ngày
+    const counts: Record<string, number> = {};
+    tweets.forEach(t => {
+        const dateStr = new Date(t.createdAt).toISOString().split('T')[0];
+        counts[dateStr] = (counts[dateStr] || 0) + 1;
+    });
+
+    // [!code changed] Cấu hình 30 ngày
+    const RANGE = 30; 
+    const heatmap = [];
+    const today = new Date();
+    
+    let currentStreak = 0;
+    let checkStreak = true;
+    let activeDaysInRange = 0; // Biến đếm mới cho đúng range 30 ngày
+
+    // Loop ngược từ hôm nay về quá khứ 30 ngày
+    for (let i = 0; i < RANGE; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const count = counts[dateStr] || 0;
+
+        // Đếm ngày active trong range này
+        if (count > 0) activeDaysInRange++;
+
+        // Tính Streak
+        if (i > 0) { // Bỏ qua hôm nay khi tính streak quá khứ
+             if (checkStreak && count > 0) currentStreak++;
+             else if (count === 0) checkStreak = false;
+        }
+
+        let level: 0 | 1 | 2 | 3 | 4 = 0;
+        if (count > 0) level = 1;
+        if (count > 1) level = 2;
+        if (count > 3) level = 3;
+        if (count > 5) level = 4;
+
+        heatmap.unshift({ date: dateStr, count, level });
+    }
+
+    const postsPerDay = (tweets.length / RANGE).toFixed(1);
+
+    return {
+        totalDays: RANGE,
+        activeDays: activeDaysInRange,
+        postsPerDay,
+        heatmap,
+        streak: currentStreak
+    };
+}
+
+
+// --- 5. KEYWORD CLOUD & MENTIONS (Spy nội dung) ---
+// Stopwords đơn giản (Tiếng Anh phổ biến trên X tech/biz)
+const STOP_WORDS = new Set([
+    "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us", "is", "are", "was", "were", "been", "has", "had", "why", "https", "http", "via"
+]);
+
+export function analyzeContentMix(tweets: Tweet[]): ContentMix {
+    const hashtagsMap: Record<string, number> = {};
+    const mentionsMap: Record<string, number> = {};
+    const wordsMap: Record<string, number> = {};
+
+    tweets.forEach(t => {
+        // 1. Lấy Hashtags & Mentions bằng Regex
+        const text = t.text.toLowerCase();
+        
+        // Regex Hashtag (#word)
+        const foundHashtags = text.match(/#[a-z0-9_]+/g) || [];
+        foundHashtags.forEach(tag => {
+            hashtagsMap[tag] = (hashtagsMap[tag] || 0) + 1;
+        });
+
+        // Regex Mention (@handle)
+        const foundMentions = text.match(/@[a-z0-9_]+/g) || [];
+        foundMentions.forEach(mention => {
+            // Bỏ qua chính user đó (nếu họ tự reply mình) - Cần xử lý ở UI hoặc chấp nhận
+            mentionsMap[mention] = (mentionsMap[mention] || 0) + 1;
+        });
+
+        // 2. Tách từ (Keyword)
+        // Loại bỏ url, ký tự đặc biệt, chỉ lấy chữ
+        const cleanText = text
+            .replace(/https?:\/\/\S+/g, '') // Bỏ Link
+            .replace(/[^\w\s]/g, '') // Bỏ dấu câu
+            .replace(/\s+/g, ' '); // Gộp khoảng trắng
+
+        const words = cleanText.split(' ');
+        words.forEach(w => {
+            if (w.length > 3 && !STOP_WORDS.has(w) && !w.startsWith('http')) {
+                wordsMap[w] = (wordsMap[w] || 0) + 1;
+            }
+        });
+    });
+
+    // Helper sort và lấy top 10
+    const getTop = (map: Record<string, number>) => {
+        return Object.entries(map)
+            .map(([text, count]) => ({ text, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+    };
+
+    // Riêng mention thì map text -> handle
+    const mentions = Object.entries(mentionsMap)
+        .map(([handle, count]) => ({ handle, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+
+    return {
+        hashtags: getTop(hashtagsMap),
+        keywords: getTop(wordsMap),
+        mentions: mentions
+    };
+}
 

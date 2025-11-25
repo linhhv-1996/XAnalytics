@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 const MODEL_NAME = "gemini-2.0-flash";
 const GENERATION_CONFIG = {
     responseMimeType: "application/json",
-    temperature: 0.1,
+    temperature: 0.0,
 };
 
 export interface PinnedPostAnalysis {
