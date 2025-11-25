@@ -115,7 +115,10 @@ export function analyzeProfile(tweets: Tweet[], profileRaw: any): AnalyticsData 
             handle: `@${profileRaw.handle}`,
             name: profileRaw.name,
             avatarUrl: profileRaw.avatar,
+            banner: profileRaw.banner,
             followers: formatNumber(profileRaw.followers),
+            following: formatNumber(profileRaw.following),
+            tweetsCount: formatNumber(profileRaw.tweetsCount),
             engagement: `${avgEngagementRate}%`,
             viralRatio: `1:${Math.round(100/viralRate) || 0}`,
             grade: calculateGrade(avgEngagementRate)

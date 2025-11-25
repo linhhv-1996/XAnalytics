@@ -59,10 +59,13 @@ export interface AnalyticsData {
         handle: string;
         name: string;
         avatarUrl: string;
+        banner: string;
         followers: string;
-        engagement: string; // VD: "1.5%"
-        viralRatio: string; // VD: "1 : 15"
-        grade: string;      // VD: "A+"
+        engagement: string;
+        viralRatio: string;
+        grade: string;
+        following: string;
+        tweetsCount: string;
     };
     
     // Insight thống kê (Thay thế cho AI text)
