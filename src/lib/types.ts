@@ -1,134 +1,113 @@
-export interface Profile {
-    handle: string;
-    name: string;
-    avatarUrl: string;
-    followers: string;
-    engagement: string;
-    viralRatio: string;
-    grade: string;
-}
+// src/lib/types.ts
 
-export interface PinnedPost {
-    text: string;
-    likes: string;
-    comments: string;
-    age: string;
-    goal: string;
-    type: string;
-    clickThrough: string;
-    url: string;
-    view: string;
-}
+export type TweetType = 'single' | 'thread' | 'retweet' | 'reply';
 
-export interface OutlierPost {
+export interface Tweet {
     id: string;
+    type: TweetType;
     text: string;
-    view: string;
-    likes: string;
-    comments: string;
-    timeAgo: string;
-    performance: string;
-    tagColor: 'blue' | 'purple' | 'green' | 'default';
+    createdAt: string; // ISO string
+    
+    // Metrics (Raw data)
+    views: number;
+    likes: number;
+    retweets: number;
+    replies: number;
+    bookmarks: number;
+    
+    // Structure & Media
+    isReply: boolean;
+    hasMedia: boolean;
+    mediaType: 'image' | 'video' | 'mixed' | 'none';
+    
+    // Entities (Để phân tích deep)
     url: string;
+    outboundLinks: string[]; // Link dẫn ra ngoài
+    hashtags: string[];
+    mentions: string[];
+    
+    // Thread info
+    threadChildren: Tweet[]; // Các tweet con (self-replies)
 }
 
-export interface PerformanceMetrics {
-    avgViews: string;
-    avgLikes: string;
-    avgReposts: string;
-    speedOfEngagement: string;
-}
-
-export interface Sponsor {
-    id: number;
+export interface TwitterProfile {
+    id: string;
     name: string;
-    description: string;
-    badgeText: string;
-    badgeColor: 'emerald' | 'sky' | 'amber' | 'fuchsia' | 'cyan' | 'lime';
-    tagline: string;
-    initials: string;
+    handle: string;
+    bio: string;
+    avatar: string;
+    banner: string | null;
+    followers: number;
+    following: number;
+    tweetsCount: number;
+    isVerified: boolean;
+    website: string;
+    joined: string;
+    location: string;
 }
 
-export interface FormatStat {
-    name: string;
-    multiplier: string;
-    icon: string;
-    barWidth: number; // percentage
-    isWinner?: boolean;
-    colorClass: string;
+// Kết quả trả về từ Fetcher
+export interface RawTwitterData {
+    profile: TwitterProfile;
+    tweets: Tweet[];
+    pinnedTweet: Tweet | null;
 }
 
-export interface BestTimeResult {
-    time: string;
-    timezone: string;
-    days: string;
-}
-
+// Kết quả trả về từ Analyzer (Insight)
 export interface AnalyticsData {
-    profile: Profile;
-    pinnedPost: PinnedPost;
-    outliers: OutlierPost[];
-    performance: PerformanceMetrics;
-    sponsors: Sponsor[];
-    archetype: ArchetypeResult;
-    formats: FormatStat[];
-    topics: TopicStat[];
-    bestTime: BestTimeResult;
-    consistency: {
-        totalDays: number;
-        activeDays: number;
-        postsPerDay: string;
-        heatmap: { date: string; count: number; level: number }[];
-        streak: number;
+    profile: {
+        handle: string;
+        name: string;
+        avatarUrl: string;
+        followers: string;
+        engagement: string; // VD: "1.5%"
+        viralRatio: string; // VD: "1 : 15"
+        grade: string;      // VD: "A+"
     };
-    contentMix: {
-        hashtags: { text: string; count: number }[];
-        mentions: { handle: string; count: number }[];
-        keywords: { text: string; count: number }[];
+    
+    // Insight thống kê (Thay thế cho AI text)
+    overview: {
+        totalEngagement: number;
+        avgEngagementRate: number;
+        viralRate: number;
+    };
+    
+    contentStrategy: {
+        threadRatio: number;
+        visualRatio: number;
+        promoRatio: number;
+    };
+    
+    funnel: {
+        viewToLike: number;
+        viewToReply: number;
+    };
+
+    // Top content cụ thể
+    topContent: {
+        mostViral: Tweet | null;
+        mostDiscussion: Tweet | null;
+        hiddenGem: Tweet | null;
+    };
+
+    // Các field cũ nếu ông muốn giữ tương thích (optional)
+    pinnedPost?: any;
+    outliers?: any[];
+    performance?: any;
+    consistency?: any;
+    bestTime?: any;
+
+    network: {
+        topMentions: { handle: string; count: number }[]; // Top bạn bè
+    };
+    topics: {
+        topHashtags: { tag: string; count: number }[];    // Top chủ đề
+    };
+    traffic: {
+        topDomains: { domain: string; count: number }[];  // Nơi dẫn link
+    };
+    habits: {
+        bestHour: string;  // VD: "9 PM"
+        postingSchedule: number[]; // Mảng 24 giờ (số lượng bài mỗi giờ)
     };
 }
-
-
-export interface AnalyzedTopic {
-    name: string;
-    description: string;
-    tweetIds: string[];
-}
-
-export interface TopicStat {
-    name: string;
-    description: string;
-    share: string;
-    reachMin: string;
-    reachAvg: string;
-    reachMax: string;
-    suggestion: string;
-    suggestionType: 'good' | 'neutral' | 'bad';
-    barStart: number;
-    barWidth: number;
-    barColor: string;
-}
-
-
-export interface ArchetypeResult {
-    name: string;
-    match_score: number;
-    aggression: number;
-    polarization: number;
-    description: string;
-}
-
-export interface ConsistencyMetrics {
-    totalDays: number;
-    activeDays: number;
-    postsPerDay: string;
-    heatmap: { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }[];
-    streak: number;
-}
-
-export interface ContentMix {
-    hashtags: { text: string; count: number }[];
-    mentions: { handle: string; count: number }[]; // Cái này là "Lite Network"
-    keywords: { text: string; count: number }[];
-}
-

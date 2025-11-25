@@ -1,5 +1,4 @@
 <script lang="ts">
-    import SearchBar from "$lib/components/analytics/SearchBar.svelte";
 
     // Xử lý FAQ accordion
     function toggleFaq(event: MouseEvent) {
@@ -45,7 +44,6 @@
         </p>
 
         <div class="space-y-3">
-          <SearchBar />
 
           <div class="flex flex-wrap items-center justify-center gap-3 text-[11px] text-slate-400">
             <span class="flex items-center gap-2">
