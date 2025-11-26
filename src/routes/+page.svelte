@@ -6,9 +6,9 @@
   import LengthStrategyCard from "$lib/components/report/LengthStrategyCard.svelte";
   import MonetizationCard from "$lib/components/report/MonetizationCard.svelte";
   import ProfileCard from "$lib/components/report/ProfileCard.svelte";
-    import ReplyStrategyCard from "$lib/components/report/ReplyStrategyCard.svelte";
+  import ReplyStrategyCard from "$lib/components/report/ReplyStrategyCard.svelte";
   import SignalSnapshot from "$lib/components/report/SignalSnapshot.svelte";
-    import TopicCloudCard from "$lib/components/report/TopicCloudCard.svelte";
+  import TopicCloudCard from "$lib/components/report/TopicCloudCard.svelte";
   import TopViralPosts from "$lib/components/report/TopViralPosts.svelte";
   import type { AnalyticsData } from "$lib/types";
 
@@ -19,22 +19,16 @@
 
   async function handleAnalyze() {
     if (!inputValue.trim()) return;
-
     isLoading = true;
     error = null;
-
-    // Clean handle (remove @ or url)
     let handle = inputValue.trim();
     if (handle.startsWith("@")) handle = handle.slice(1);
-    if (handle.includes("x.com/"))
-      handle = handle.split("x.com/")[1].split("/")[0];
-    if (handle.includes("twitter.com/"))
-      handle = handle.split("twitter.com/")[1].split("/")[0];
+    if (handle.includes("x.com/")) handle = handle.split("x.com/")[1].split("/")[0];
+    if (handle.includes("twitter.com/")) handle = handle.split("twitter.com/")[1].split("/")[0];
 
     try {
       const res = await fetch(`/api/analytics?handle=${handle}`);
       const data = await res.json();
-
       if (res.ok) {
         analyticsData = data;
       } else {
@@ -49,141 +43,82 @@
   }
 </script>
 
-<main class="max-w-[1100px] mx-auto px-4 py-8 relative z-10 pt-16">
+<main class="max-w-5xl mx-auto px-4 pt-10 pb-12 relative z-10">
   {#if isLoading}
-    <div
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
-    >
-      <div
-        class="glass-panel p-6 rounded-2xl flex flex-col items-center gap-4 border border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)]"
-      >
-        <div class="relative w-12 h-12">
-          <div
-            class="absolute inset-0 rounded-full border-t-2 border-emerald-500 animate-spin"
-          ></div>
-          <div
-            class="absolute inset-2 rounded-full border-t-2 border-emerald-300 animate-spin reverse"
-            style="animation-direction: reverse; animation-duration: 1s;"
-          ></div>
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-sm animate-fade-in">
+      <div class="card p-6 rounded-2xl flex flex-col items-center gap-4 border border-slate-200 shadow-2xl">
+        <div class="relative w-10 h-10">
+          <div class="absolute inset-0 rounded-full border-t-2 border-slate-900 animate-spin"></div>
         </div>
         <div class="text-center">
-          <h3 class="text-white font-bold text-lg">Decoding Strategy...</h3>
-          <p class="text-zinc-400 text-xs font-mono mt-1">
-            Fetching live data from X
-          </p>
+          <h3 class="text-slate-900 font-bold text-sm">Decoding Strategy...</h3>
+          <p class="text-slate-500 text-xs font-mono mt-1">Fetching live data from X</p>
         </div>
       </div>
     </div>
   {/if}
 
-  <section class="mb-20 text-center relative">
-    <div
-      class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm mb-6 animate-fade-in-up"
-    >
+  <section class="text-center mb-14 relative">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50/80 text-emerald-700 text-[11px] font-mono uppercase tracking-[0.16em] animate-fade-in-up">
       <span class="relative flex h-2 w-2">
-        <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
-        ></span>
-        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"
-        ></span>
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
-      <span
-        class="text-[10px] uppercase tracking-[0.15em] text-emerald-400 font-bold font-mono"
-      >
-        Live Intelligence V2.0
-      </span>
+      Live Intelligence v2.0
     </div>
 
-    <h1
-      class="max-w-4xl mx-auto text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.15]"
-    >
-      Reverse Engineer the <br class="hidden md:block" />
-      <span
-        class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400"
-        >Growth Strategy</span
-      > of Any Profile.
+    <h1 class="max-w-3xl mx-auto mt-5 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
+      Reverse engineer the
+      <span class="bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 bg-clip-text text-transparent">growth strategy</span>
+      of any profile.
     </h1>
 
-    <p
-      class="max-w-2xl mx-auto text-sm sm:text-[16px] text-zinc-400 leading-relaxed mb-10"
-    >
-      Stop guessing what works. Instantly decode the viral hooks, posting
-      schedules, and monetization funnels of successful creators—then apply them
-      to
-      <span class="text-zinc-200 font-medium">grow your own audience.</span>
+    <p class="max-w-2xl mx-auto mt-4 text-[13px] sm:text-[15px] text-slate-600 leading-relaxed mb-8">
+      Stop guessing what works. Decode viral hooks, posting schedules, and monetization funnels of top creators – then apply them to grow <span class="font-semibold text-slate-900">your own audience.</span>
     </p>
 
-    <form
-      on:submit|preventDefault={handleAnalyze}
-      class="max-w-[500px] mx-auto relative group"
-    >
-      <div
-        class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition duration-500"
-      ></div>
-
-      <div
-        class="relative flex items-center bg-[#0A0A0A] rounded-xl border border-white/10 p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-      >
-        <div class="pl-3.5 pr-2 text-zinc-500">
+    <form on:submit|preventDefault={handleAnalyze} class="mt-8 max-w-xl mx-auto group relative z-20">
+      <div class="relative rounded-2xl border border-slate-200 bg-white shadow-subtle px-2 py-1.5 flex items-center gap-2 hover:border-slate-300 transition-colors">
+        <div class="pl-2 pr-1 text-slate-400">
           <i class="fa-brands fa-x-twitter text-sm"></i>
         </div>
         <input
           type="text"
           bind:value={inputValue}
           placeholder="Analyze a competitor (e.g. @hormozi)"
-          class="flex-1 bg-transparent border-none text-sm text-white placeholder-zinc-600 focus:ring-0 focus:outline-none h-10 font-mono"
+          class="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none font-mono h-9"
         />
-        <div class="hidden sm:flex items-center gap-1.5 pr-2">
-          <kbd
-            class="hidden md:inline-flex items-center justify-center h-5 px-1.5 text-[10px] font-medium text-zinc-500 bg-zinc-900 border border-zinc-800 rounded rounded-[4px] font-mono"
-            >⌘K</kbd
-          >
+        <div class="hidden sm:flex items-center gap-1.5 pr-1">
+            <kbd class="hidden md:inline-flex items-center justify-center h-5 px-1.5 text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded">⌘K</kbd>
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          class="h-9 px-4 rounded-lg bg-white hover:bg-zinc-200 text-black text-[12px] font-bold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.05)] active:scale-[0.98] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          class="ml-1 h-9 px-4 rounded-xl bg-slate-900 text-[12px] font-semibold text-white flex items-center gap-1.5 shadow-sm hover:bg-slate-800 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
         >
-          <span>{isLoading ? "Scanning..." : "Decode Strategy"}</span>
+          <span>{isLoading ? "Scanning..." : "Decode strategy"}</span>
           {#if !isLoading}
-            <i
-              class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"
-            ></i>
+            <i class="fa-solid fa-arrow-right -rotate-45 text-[11px]"></i>
           {/if}
         </button>
       </div>
       {#if error}
-        <div
-          class="text-rose-400 text-xs mt-3 bg-rose-500/10 inline-block px-3 py-1 rounded border border-rose-500/20"
-        >
-          <i class="fa-solid fa-triangle-exclamation mr-1"></i>
-          {error}
+        <div class="text-rose-500 text-xs mt-3 bg-rose-50 inline-block px-3 py-1 rounded border border-rose-100">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i> {error}
         </div>
       {/if}
     </form>
 
-    <div
-      class="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[11px] text-zinc-500 font-mono opacity-70"
-    >
-      <span class="flex items-center gap-1.5">
-        <i class="fa-solid fa-check text-emerald-500/80"></i> For Creators & Brands
-      </span>
-      <span class="hidden sm:inline w-1 h-1 bg-zinc-800 rounded-full"></span>
-      <span class="flex items-center gap-1.5">
-        <i class="fa-solid fa-check text-emerald-500/80"></i> Unlock Viral Structures
-      </span>
-      <span class="hidden sm:inline w-1 h-1 bg-zinc-800 rounded-full"></span>
-      <span class="flex items-center gap-1.5">
-        <i class="fa-solid fa-bolt text-yellow-500/80"></i> AI Pattern Recognition
-      </span>
+    <div class="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-500 opacity-80">
+      <span class="flex items-center gap-1"><i class="fa-solid fa-check text-emerald-500"></i> Creators & brands</span>
+      <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> AI pattern recognition</span>
+      <span class="flex items-center gap-1"><i class="fa-regular fa-circle-dot text-sky-500"></i> No API keys needed</span>
     </div>
   </section>
 
   {#if analyticsData}
-    <div
-      class="grid grid-cols-1 md:grid-cols-[320px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up">
       <div class="space-y-4">
         <ProfileCard
           profile={analyticsData.profile}
@@ -192,34 +127,32 @@
           traffic={analyticsData.traffic}
         />
 
-        <div
-          class="glass-panel rounded-xl p-6 text-center text-zinc-500 text-xs border-dashed border-zinc-800"
-        >
-          Other side widgets coming soon...
-        </div>
+          <MonetizationCard data={analyticsData.contentStrategy.monetization} />
+          <LengthStrategyCard data={analyticsData.contentStrategy.length} />
+       
+
       </div>
 
       <div class="space-y-4">
-        <SignalSnapshot
-          signal={analyticsData.signal}
-          profileAvatar={analyticsData.profile.avatarUrl}
-        />
+        <SignalSnapshot signal={analyticsData.signal} profileAvatar={analyticsData.profile.avatarUrl} />
+        
         {#if analyticsData.topContent.list.length > 0}
           <TopViralPosts posts={analyticsData.topContent.list} />
         {/if}
+        
         <BaselinePerformance baseline={analyticsData.baseline} />
-
         <TopicCloudCard />
-
         <ReplyStrategyCard />
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MonetizationCard data={analyticsData.contentStrategy.monetization} />
           <LengthStrategyCard data={analyticsData.contentStrategy.length} />
-        </div>
-        <BestTimeChart habits={analyticsData.habits} />
+        </div> -->
         
-        <AudienceFunnel funnel={analyticsData.funnel} />
+        <!-- <div class="grid grid-cols-1 md:grid-cols-[1.4fr_1.6fr] gap-4"> -->
+            <BestTimeChart habits={analyticsData.habits} />
+            <AudienceFunnel funnel={analyticsData.funnel} />
+        <!-- </div> -->
       </div>
     </div>
   {:else}

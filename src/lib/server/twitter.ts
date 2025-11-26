@@ -226,12 +226,12 @@ export async function fetchTwitterData(handle: string): Promise<RawTwitterData> 
     }
 
     // 3. Get Reply
-    // const replies = await fetch(`https://${API_HOST}/user-replies?user=${profile.id}`, options);
-    // if (!replies.ok) throw new Error('Failed to fetch user');
-    // const replyRaw = await replies.json();
-    // if (!replyRaw) throw new Error('User replies not found');
+    const replies = await fetch(`https://${API_HOST}/user-replies?user=${profile.id}`, options);
+    if (!replies.ok) throw new Error('Failed to fetch user');
+    const replyRaw = await replies.json();
+    if (!replyRaw) throw new Error('User replies not found');
 
-    // const cleanReplies = parseUserReplies(replyRaw);
+    const cleanReplies = parseUserReplies(replyRaw);
 
-    return { profile, tweets: allTweetsRaw, pinnedTweet: pinnedTweetRaw, reply: [] };
+    return { profile, tweets: allTweetsRaw, pinnedTweet: pinnedTweetRaw, reply: cleanReplies };
 }

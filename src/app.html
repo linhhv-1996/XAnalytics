@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
@@ -13,10 +13,23 @@
         
         <script>
             tailwind.config = {
-                darkMode: 'class',
                 theme: {
                     extend: {
-                        colors: { zinc: { 850: '#1f1f22', 900: '#18181b', 950: '#09090b' } }
+                        fontFamily: {
+                            sans: ['Inter', 'system-ui', 'sans-serif'],
+                            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular'],
+                        },
+                        colors: {
+                            brand: {
+                                50: '#ecfdf5',
+                                100: '#d1fae5',
+                                500: '#10b981',
+                                600: '#059669',
+                            },
+                        },
+                        boxShadow: {
+                            subtle: '0 18px 45px rgba(15,23,42,0.06)',
+                        },
                     }
                 }
             }
@@ -24,12 +37,11 @@
 
 		%sveltekit.head%
 	</head>
-	<body class="text-zinc-300 min-h-screen antialiased selection:bg-emerald-500/30 relative bg-[#030303] overflow-x-hidden" data-sveltekit-preload-data="hover">
-		<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div class="absolute inset-0 bg-grid bg-center"></div>
-            <div class="hero-glow"></div>
-            <div class="hero-glow-sub"></div>
+	<body class="text-slate-900 min-h-screen antialiased relative overflow-x-hidden" data-sveltekit-preload-data="hover">
+        <div class="fixed inset-0 pointer-events-none -z-10">
+            <div class="absolute inset-0 bg-grid-light opacity-60"></div>
         </div>
+        
         <div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
