@@ -105,7 +105,7 @@ export async function fetchTwitterData(handle: string): Promise<RawTwitterData> 
     let allTweetsRaw: Tweet[] = [];
     let pinnedTweetRaw: Tweet | null = null;
     let cursor: string | undefined;
-    const MAX_BATCHES = 2; // Lấy khoảng 40-50 bài
+    const MAX_BATCHES = 3; // Lấy khoảng 40-50 bài
 
     for (let i = 0; i < MAX_BATCHES; i++) {
         try {

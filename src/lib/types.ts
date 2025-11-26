@@ -57,6 +57,7 @@ export interface RawTwitterData {
 export interface AnalyticsData {
     profile: {
         handle: string;
+        bio: string;
         name: string;
         avatarUrl: string;
         banner: string;
@@ -79,11 +80,27 @@ export interface AnalyticsData {
         threadRatio: number;
         visualRatio: number;
         promoRatio: number;
+
+        // [!code ++] Thêm dữ liệu chi tiết cho UI mới
+        monetization: {
+            valueCount: number;
+            promoCount: number;
+            valueRatio: number; // %
+            promoRatio: number; // %
+            frequency: string;  // VD: "Sells every 4 posts"
+        };
+        length: {
+            short: { count: number; avgViews: number; score: number };
+            medium: { count: number; avgViews: number; score: number };
+            long: { count: number; avgViews: number; score: number };
+            bestType: 'Short' | 'Medium' | 'Long' | 'Mixed';
+        };
     };
     
     funnel: {
         viewToLike: number;
         viewToReply: number;
+        viewToFan: number;
     };
 
     // Top content cụ thể
@@ -91,6 +108,14 @@ export interface AnalyticsData {
         mostViral: Tweet | null;
         mostDiscussion: Tweet | null;
         hiddenGem: Tweet | null;
+        list: {
+            text: string;
+            views: string;
+            likes: string;
+            replies: string;
+            date: string;
+            url: string;
+        }[];
     };
 
     // Các field cũ nếu ông muốn giữ tương thích (optional)
@@ -110,7 +135,47 @@ export interface AnalyticsData {
         topDomains: { domain: string; count: number }[];  // Nơi dẫn link
     };
     habits: {
-        bestHour: string;  // VD: "9 PM"
-        postingSchedule: number[]; // Mảng 24 giờ (số lượng bài mỗi giờ)
+        bestHour: string;
+        bestHourMetric: string;
+        postingSchedule: number[];
+        heatmap: {          // [!code ++] Thêm trường này
+            date: string;   // Format: "Nov 25"
+            fullDate: string; // Format: "2025-11-25"
+            count: number;
+            level: 0 | 1 | 2 | 3; // Mức độ đậm nhạt
+        }[];
+        hourlyPerf: {
+            hour: number;      // 0-23
+            avgViews: number;  // Trung bình view
+            postCount: number; // Số bài đăng (để tham khảo)
+            score: number;     // Điểm chuẩn hóa 0-100 để vẽ height cột
+        }[];
     };
+
+    baseline: {
+        views: number;      // Median Views
+        likes: number;      // Median Likes
+        engagement: number; // Median Engagement Rate
+        viralRate: number;  // Giữ nguyên logic cũ
+        
+        // Để vẽ thanh bar % (So sánh Median với Max)
+        viewsScore: number; 
+        likesScore: number;
+        engagementScore: number;
+        viralScore: number; 
+    };
+
+    signal: {
+        title: string;
+        type: string;      // "Breakout Post", "Pinned Strategy", "Top Signal"
+        text: string;
+        createdAt: string; // "Dec 07, 2023"
+        likes: string;     // "42k"
+        replies: string;   // "4.9k"
+        views: string;
+        multiplier: string; // "4.2x" (So với baseline)
+        url: string;
+        hasMedia: boolean;
+        mediaType: 'image' | 'video' | 'mixed' | 'none';
+    } | null;
 }

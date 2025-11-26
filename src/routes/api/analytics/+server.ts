@@ -12,7 +12,7 @@ export const GET = async ({ url }) => {
         const { profile, tweets, pinnedTweet } = await fetchTwitterData(handle);
 
         // 2. Tính toán (Thay AI bằng Logic thống kê)
-        const insights = analyzeProfile(tweets, profile);
+        const insights = analyzeProfile(tweets, pinnedTweet, profile);
 
         // 3. Trả về JSON (Frontend sẽ nhận cục này)
         return json(insights);
