@@ -6,7 +6,9 @@
   import LengthStrategyCard from "$lib/components/report/LengthStrategyCard.svelte";
   import MonetizationCard from "$lib/components/report/MonetizationCard.svelte";
   import ProfileCard from "$lib/components/report/ProfileCard.svelte";
+    import ReplyStrategyCard from "$lib/components/report/ReplyStrategyCard.svelte";
   import SignalSnapshot from "$lib/components/report/SignalSnapshot.svelte";
+    import TopicCloudCard from "$lib/components/report/TopicCloudCard.svelte";
   import TopViralPosts from "$lib/components/report/TopViralPosts.svelte";
   import type { AnalyticsData } from "$lib/types";
 
@@ -206,6 +208,11 @@
           <TopViralPosts posts={analyticsData.topContent.list} />
         {/if}
         <BaselinePerformance baseline={analyticsData.baseline} />
+
+        <TopicCloudCard />
+
+        <ReplyStrategyCard />
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MonetizationCard data={analyticsData.contentStrategy.monetization} />
           <LengthStrategyCard data={analyticsData.contentStrategy.length} />

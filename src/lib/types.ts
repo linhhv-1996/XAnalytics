@@ -51,6 +51,7 @@ export interface RawTwitterData {
     profile: TwitterProfile;
     tweets: Tweet[];
     pinnedTweet: Tweet | null;
+    reply: ReplyTweet[] | []
 }
 
 // Kết quả trả về từ Analyzer (Insight)
@@ -179,3 +180,30 @@ export interface AnalyticsData {
         mediaType: 'image' | 'video' | 'mixed' | 'none';
     } | null;
 }
+
+
+
+// Interface cho dữ liệu Reply đã làm sạch
+export interface ReplyContext {
+    id: string;
+    text: string;
+    createdAt: string;
+    authorHandle: string; // Người user đang reply
+    authorAvatar: string;
+}
+
+export interface ReplyTweet {
+    id: string;
+    text: string;
+    createdAt: string;
+    
+    // Metrics của Reply (để đánh giá chất lượng tương tác)
+    likes: number;
+    replies: number;
+    retweets: number;
+    views: number;
+
+    // Context (Reply ai, bài gốc nội dung gì)
+    replyTo: ReplyContext;
+}
+
