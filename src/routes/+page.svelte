@@ -9,24 +9,38 @@
     async function handleAnalyze() {
         if (!inputValue.trim()) return;
         
-        isLoading = true;
+        // 1. Clean handle
         let handle = inputValue.trim();
         if (handle.startsWith("@")) handle = handle.slice(1);
         if (handle.includes("x.com/")) handle = handle.split("x.com/")[1].split("/")[0];
         if (handle.includes("twitter.com/")) handle = handle.split("twitter.com/")[1].split("/")[0];
         
-        // [!code fix] CHECK LOGIN CLIENT-SIDE
-        // Nếu chưa có user trong store -> Chuyển hướng ngay lập tức, KHÔNG set isLoading
+        // 2. CHECK LOGIN CLIENT-SIDE
         if (!$page.data.user) {
             const returnUrl = `/report/${handle}`;
-            await goto(`/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+            await goto(`/login?redirectTo=${encodeURIComponent(returnUrl)}`); //
             return;
         }
 
-        // [!code fix] Chỉ hiện loading khi chắc chắn user đã đăng nhập và đang fetch data thật
-        isLoading = true;
-        await goto(`/report/${handle}`);
-
+        // 3. Bật Loading ngay lập tức
+        isLoading = true; //
+        
+        // FIX UI FREEZE & RE-ANALYSIS
+        // 1. setTimeout(0) cho phép browser vẽ UI (isLoading=true) trước khi gọi goto.
+        // 2. Thêm ?ref=${Date.now()} để force reload page.server.ts (fix cùng handle).
+        setTimeout(async () => {
+            try {
+                await goto(`/report/${handle}?ref=${Date.now()}`);
+            } catch (e) {
+                // Nếu navigation bị lỗi, tắt loading.
+            } finally {
+                // Đảm bảo loading tắt sau khi load xong (quan trọng khi component được reuse).
+                isLoading = false;
+            }
+        }, 0);
+        
+        // Reset input ngay lập tức
+        inputValue = "";
     }
 </script>
 

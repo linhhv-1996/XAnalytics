@@ -23,20 +23,30 @@
         if (!searchTerm.trim()) return;
         
         // 1. Bật Loading Popup ngay lập tức
-        isSearching = true;
-        
+        isSearching = true; //
+
         let handle = searchTerm.trim();
         if (handle.startsWith("@")) handle = handle.slice(1);
         if (handle.includes("x.com/")) handle = handle.split("x.com/")[1].split("/")[0];
         if (handle.includes("twitter.com/")) handle = handle.split("twitter.com/")[1].split("/")[0];
-
-        // 2. Gọi Server (Trình duyệt sẽ treo ở đây đợi Server load data)
-        // Trong thời gian này, Popup vẫn hiện.
-        await goto(`/report/${handle}`);
         
-        // 3. Khi server trả về xong -> Tắt Loading & Reset
+        // Reset input ngay lập tức
         searchTerm = "";
-        isSearching = false;
+        
+        // FIX UI FREEZE & RE-ANALYSIS
+        // 1. setTimeout(0) cho phép browser vẽ UI (isSearching=true) trước khi gọi goto.
+        // 2. Thêm ?ref=${Date.now()} để force reload page.server.ts (fix cùng handle).
+        setTimeout(async () => {
+            try {
+                // 2. Gọi Server. Thêm tham số `ref` để buộc reload.
+                await goto(`/report/${handle}?ref=${Date.now()}`); 
+            } catch (e) {
+                // Nếu navigation bị lỗi, tắt loading.
+            } finally {
+                // Đảm bảo loading tắt sau khi load xong (quan trọng nếu component được reuse).
+                isSearching = false; 
+            }
+        }, 0);
     }
 </script>
 
