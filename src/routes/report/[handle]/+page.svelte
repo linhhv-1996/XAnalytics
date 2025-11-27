@@ -12,6 +12,10 @@
     import BaselinePerformance from "$lib/components/report/BaselinePerformance.svelte";
     import BestTimeChart from "$lib/components/report/BestTimeChart.svelte";
     import AudienceFunnel from "$lib/components/report/AudienceFunnel.svelte";
+    import InsiderNetworkCard from '$lib/components/report/InsiderNetworkCard.svelte';
+    import RecentActivityCard from '$lib/components/report/RecentActivityCard.svelte';
+    import NetworkRadarCard from '$lib/components/report/NetworkRadarCard.svelte';
+    import TrafficFlowCard from '$lib/components/report/TrafficFlowCard.svelte';
 
     // State
     let analyticsData: any = null;
@@ -105,47 +109,68 @@
 {#if !isLoading && analyticsData}
 <div class="max-w-5xl mx-auto px-4 pb-10 pt-6">
     
-    <div class="flex flex-col items-center gap-3 mb-16 sticky top-4 z-30 w-full pointer-events-none">
-        
-        <div class="pointer-events-auto bg-white/80 backdrop-blur border border-white/50 shadow-sm px-4 py-1.5 rounded-full flex items-center gap-2 ring-1 ring-slate-900/5">
-             <h1 class="text-[13px] font-bold text-slate-700 flex items-center gap-2">
-                ANALYTICS REPORT
-                <span class="w-[1px] h-3 bg-slate-300"></span>
-                <span class="font-mono text-slate-500 font-normal">@{$page.params.handle}</span>
-            </h1>
-        </div>
-
-        <form on:submit|preventDefault={handleSearch} class="pointer-events-auto relative w-full max-w-md flex items-center p-1.5 bg-white/90 backdrop-blur shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-slate-200 rounded-xl ring-1 ring-slate-900/5 transition-all focus-within:ring-slate-900/20 focus-within:border-slate-300 focus-within:shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
-            <div class="pl-3 pr-2 text-slate-400">
-                <i class="fa-brands fa-x-twitter"></i>
-            </div>
+<div class="sticky top-20 z-30 w-full mb-12 pointer-events-none transition-all duration-300">
+        <div class="pointer-events-auto w-full flex justify-center px-2 sm:px-4"> 
             
-            <input
-                type="text"
-                bind:value={searchTerm}
-                placeholder="Analyze another profile..."
-                class="flex-1 bg-transparent text-[13px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none h-9"
-            />
+            <div class="w-fit mx-auto bg-white border border-slate-300 shadow-lg shadow-slate-200/50 rounded-3xl p-1.5 flex flex-col sm:flex-row items-center gap-3">
+                
+                <div class="hidden md:flex items-center gap-2 px-2 text-[12px] shrink-0">
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Report:</span>
+                    <div class="flex items-center gap-2 text-slate-900 font-bold bg-slate-100 px-3 py-1.5 rounded-full border border-slate-300">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                        </span>
+                        <span class="font-mono">{analyticsData.profile.handle}</span>
+                    </div>
+                </div>
 
-            <button
-                type="submit"
-                disabled={isLoading}
-                class="h-9 px-5 rounded-lg bg-slate-900 text-white text-[11px] font-bold uppercase tracking-wide hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-slate-900/10"
-            >
-                <span>Analyze</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-        </form>
+                <form on:submit|preventDefault={handleSearch} class="relative w-full sm:w-auto">
+                    <div class="relative rounded-2xl border border-slate-300 bg-white px-2 py-1 flex items-center gap-2 hover:border-slate-400 focus-within:border-slate-900 focus-within:ring-1 focus-within:ring-slate-900 transition-all w-full sm:w-[300px]">
+                        
+                        <div class="pl-2 pr-1 text-slate-600">
+                            <i class="fa-brands fa-x-twitter text-sm"></i>
+                        </div>
+                        
+                        <input
+                            type="text"
+                            bind:value={searchTerm}
+                            placeholder="Analyze another..."
+                            class="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-500 focus:outline-none font-mono h-9 min-w-0 font-medium truncate"
+                        />
+
+                        <button
+                            type="submit"
+                            disabled={isLoading || !searchTerm}
+                            class="ml-1 h-9 px-3 rounded-xl bg-slate-900 text-[12px] font-bold text-white flex items-center gap-1.5 shadow-md hover:bg-black active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all whitespace-nowrap"
+                        >
+                            {#if isLoading}
+                                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            {:else}
+                                <span>Analyze</span>
+                                <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i>
+                            {/if}
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up">
         <div class="space-y-4">
-            <ProfileCard
-                profile={analyticsData.profile}
-                habits={analyticsData.habits}
-                network={analyticsData.network}
-                traffic={analyticsData.traffic}
-            />
+            <ProfileCard profile={analyticsData.profile} />
+
+            <RecentActivityCard heatmap={analyticsData.habits.heatmap} />
+
+            <NetworkRadarCard network={analyticsData.network} />
+            <TrafficFlowCard traffic={analyticsData.traffic} />
+            
+            {#if analyticsData.network.vipFollowing && analyticsData.network.vipFollowing.length > 0}
+                <InsiderNetworkCard data={analyticsData.network.vipFollowing} />
+            {/if}
+            
             <AudienceFunnel funnel={analyticsData.funnel} />
             <MonetizationCard data={analyticsData.contentStrategy.monetization} />
             <LengthStrategyCard data={analyticsData.contentStrategy.length} />

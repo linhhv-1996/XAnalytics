@@ -1,50 +1,4 @@
-// src/routes/api/analyze-profile/+server.ts
-import { json, error } from '@sveltejs/kit';
-import { fetchTwitterData, fetchVipConnections } from '$lib/server/twitter';
-import { analyzeProfile } from '$lib/server/analytics';
-import type { RequestHandler } from './$types';
-import { logData } from '$lib/server/debug';
-
-export const POST: RequestHandler = async ({ request, locals, setHeaders }) => {
-    // 1. Check Login
-    if (!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const handle = body.handle;
-
-    if (!handle) {
-        return json({ error: 'Missing handle' }, { status: 400 });
-    }
-
-    try {
-        console.log(`[API] Analyzing: ${handle}`);
-
-        // 2. Fetch dữ liệu
-        // const { profile, tweets, pinnedTweet, reply } = await fetchTwitterData(handle);
-
-        // 3. Phân tích
-        // const insights = analyzeProfile(tweets, pinnedTweet, reply, profile);
-
-        // 4. Following
-        // const vipNetwork = await fetchVipConnections(profile.handle);
-
-        // 4. Cache Control (Client side cache 5 phút)
-        // setHeaders({
-        //     'cache-control': 'private, max-age=300'
-        // });
-
-        // const analyticsData = {
-        //     ...insights,
-        //     network: {
-        //         topMentions: insights.network.topMentions,
-        //         vipFollowing: vipNetwork
-        //     }
-        // };
-
-        
-        const analyticsData = {
+{
   "profile": {
     "handle": "@marclou",
     "name": "Marc Lou",
@@ -877,18 +831,4 @@ export const POST: RequestHandler = async ({ request, locals, setHeaders }) => {
       }
     ]
   }
-};
-
-        return json({
-            success: true,
-            analyticsData: analyticsData
-        });
-
-    } catch (e: any) {
-        console.error("Analyze Error:", e);
-        return json({
-            success: false,
-            message: e.message || 'Profile not found or Account is private'
-        }, { status: 404 });
-    }
-};
+}

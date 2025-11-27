@@ -11,8 +11,6 @@
     </div>
 
     <div class="relative pl-2">
-        <div class="absolute left-[22px] top-4 bottom-8 w-[2px] bg-slate-100 -z-10"></div>
-
         <div class="flex gap-4 relative mb-1">
             <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm z-10">
                 <i class="fa-regular fa-eye"></i>
@@ -33,7 +31,7 @@
                 <i class="fa-solid fa-arrow-down text-[10px] text-slate-300"></i>
             </div>
             <div class="flex-1">
-                <span class="text-[9px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 inline-block">
+                <span class="text-[9px] text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 inline-block">
                     {funnel.viewToLike}% conversion
                 </span>
             </div>
@@ -59,7 +57,7 @@
                 <i class="fa-solid fa-arrow-down text-[10px] text-slate-300"></i>
             </div>
             <div class="flex-1">
-                 <span class="text-[9px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 inline-block">
+                <span class="text-[9px] text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 inline-block">
                     High intent
                 </span>
             </div>
@@ -77,7 +75,7 @@
                 <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div class="h-full bg-emerald-500 rounded-full" style="width: {Math.min(funnel.viewToFan * 10, 100)}%"></div>
                 </div>
-                <p class="text-[9px] text-slate-400 mt-1.5">
+                <p class="text-[9px] text-slate-600 mt-1.5">
                     Reply or Bookmark (Action takers)
                 </p>
             </div>
