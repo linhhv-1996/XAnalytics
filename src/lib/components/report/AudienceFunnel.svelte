@@ -16,7 +16,7 @@
                 <div class="w-1.5 h-1.5 bg-slate-500 rounded-full"></div>
             </div>
             <div class="flex-1">
-                <div class="flex justify-between text-[10px] mb-1 text-slate-500">
+                <div class="flex justify-between text-[11px] mb-1 text-slate-500">
                     <span>Avg. Views</span><span class="text-slate-900 font-mono">100%</span>
                 </div>
                 <div class="h-1.5 bg-slate-100 rounded-full w-full">
@@ -30,7 +30,7 @@
                 <div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div>
             </div>
             <div class="flex-1">
-                <div class="flex justify-between text-[10px] mb-1 text-slate-500">
+                <div class="flex justify-between text-[11px] mb-1 text-slate-500">
                     <span>Likes</span><span class="text-pink-500 font-bold font-mono">{funnel.viewToLike}%</span>
                 </div>
                 <div class="h-1.5 bg-slate-100 rounded-full w-full">
@@ -44,7 +44,7 @@
                 <div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
             </div>
             <div class="flex-1">
-                <div class="flex justify-between text-[10px] mb-1 text-slate-500">
+                <div class="flex justify-between text-[11px] mb-1 text-slate-500">
                     <span>Fans</span><span class="text-purple-500 font-bold font-mono">{funnel.viewToFan}%</span>
                 </div>
                 <div class="h-1.5 bg-slate-100 rounded-full w-full">

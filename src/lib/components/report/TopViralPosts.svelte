@@ -32,7 +32,7 @@
                         {post.text}
                     </p>
                     
-                    <div class="flex items-center gap-3 text-[10px] text-slate-500">
+                    <div class="flex items-center gap-3 text-[11px] text-slate-500">
                         <span class="flex items-center gap-1 text-emerald-600 font-medium bg-emerald-50 px-1.5 rounded">
                             <i class="fa-solid fa-chart-simple"></i> {post.views}
                         </span>

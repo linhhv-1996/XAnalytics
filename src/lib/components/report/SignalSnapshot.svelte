@@ -9,7 +9,7 @@
 
 {#if signal}
 <div class="card flex flex-col relative overflow-hidden group">
-    <div class="flex items-center justify-between px-4 pt-3 pb-2 border-b border-slate-100">
+    <div class="flex items-center justify-between px-4 pt-3 pb-2">
         <div class="flex items-center gap-2">
             <i class="{cardIcon} text-slate-400 text-[11px]"></i>
             <h3 class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-700">
@@ -44,14 +44,14 @@
             </a>
         </div>
 
-        <div class="flex items-center gap-4 text-[11px] text-slate-500 border-t border-slate-100 pt-2.5">
+        <div class="flex items-center gap-4 text-[11px] text-slate-500 pt-0">
             <span class="flex items-center gap-1.5 text-slate-900" title="Views">
                 <i class="fa-solid fa-chart-simple"></i> {signal.views}
             </span>
             <span class="flex items-center gap-1.5" title="Likes">
                 <i class="fa-solid fa-heart"></i> {signal.likes}
             </span>
-            <span class="ml-auto text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200 font-mono">
+            <span class="ml-auto text-[11px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200 font-mono">
                 {signal.multiplier} baseline
             </span>
         </div>

@@ -1,5 +1,15 @@
 // src/lib/server/analytics.ts
-import type { Tweet, AnalyticsData, TwitterProfile } from '$lib/types';
+import type { Tweet, AnalyticsData, TwitterProfile, ReplyTweet, AITopic } from '$lib/types';
+
+const STOP_WORDS = new Set([
+    'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 
+    'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 
+    'their', 'what', 'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 
+    'just', 'know', 'take', 'people', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then', 'now', 
+    'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 
+    'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'is', 'are', 'was', 'were', 'been', 'has',
+    'https', 'http', 'com', 'www', 'status' // Bỏ thêm mấy từ rác của link
+]);
 
 function calculateMedian(values: number[]): number {
     if (values.length === 0) return 0;
@@ -21,8 +31,101 @@ function calculateGrade(er: number) {
     return "C";
 }
 
+
+// [!code update] Hàm analyzeReplyStrategy đã lược bỏ BIG_ACCOUNTS
+function analyzeReplyStrategy(replies: any[], originalHandle: string) {
+    // Guard clause
+    if (!replies || replies.length === 0) {
+        return {
+            replyCount: 0,
+            avgLength: 0,
+            archetype: "N/A",
+            metrics: { spamScore: 0, valueScore: 0, neutralScore: 0 }, // [!code ++] Thêm neutralScore
+            topTargets: []
+        };
+    }
+
+    let shortReplies = 0;      // < 40 ký tự (Tăng ngưỡng lên chút)
+    let valueReplies = 0;      // > 80 ký tự (Chuẩn cao hơn cho Value)
+    let neutralReplies = 0;    // 40 - 80 ký tự
+    let linkReplies = 0;       // Có link
+    let totalLen = 0;
+    
+    const replyTargetMap: Record<string, { count: number; avatar: string; handle: string }> = {};
+
+    replies.forEach(t => {
+        const text = t.text || "";
+        const len = text.length;
+        totalLen += len;
+
+        if (t.outboundLinks && t.outboundLinks.length > 0) linkReplies++;
+
+        // [!code fix] Logic phân loại mới: Phủ kín 100% trường hợp
+        if (len < 40) {
+            shortReplies++;
+        } else if (len >= 80) {
+            valueReplies++;
+        } else {
+            neutralReplies++;
+        }
+
+        // Phân tích đối tượng (giữ nguyên)
+        const target = t.replyTo; 
+        if (target && target.authorHandle) {
+            const handle = target.authorHandle;
+            if (handle.toLowerCase() !== originalHandle.toLowerCase()) {
+                if (!replyTargetMap[handle]) {
+                    replyTargetMap[handle] = { 
+                        count: 0, 
+                        avatar: target.authorAvatar || "", 
+                        handle: handle 
+                    };
+                }
+                replyTargetMap[handle].count++;
+            }
+        }
+    });
+
+    const count = replies.length;
+    const avgLength = Math.round(totalLen / count);
+    
+    const topTargets = Object.values(replyTargetMap)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 12);
+
+    // Định danh tính cách
+    let archetype = "Conversationalist"; 
+    const linkRatio = linkReplies / count;
+    const shortRatio = shortReplies / count;
+    const valueRatio = valueReplies / count;
+
+    if (linkRatio > 0.2) archetype = "Plugger / Spammer"; // > 20% reply có link
+    else if (shortRatio > 0.6) archetype = "NPC / Bot";   // > 60% reply ngắn
+    else if (valueRatio > 0.4) archetype = "Value Builder"; // > 40% reply dài
+    else archetype = "Supporter"; // Chủ yếu là neutral
+
+    return {
+        replyCount: count,
+        avgLength,
+        archetype,
+        metrics: {
+            spamScore: Math.round((shortReplies / count) * 100),
+            valueScore: Math.round((valueReplies / count) * 100),
+            neutralScore: Math.round((neutralReplies / count) * 100)
+        },
+        topTargets 
+    };
+}
+
+
+
 // [!code fix] Đổi type profileRaw từ any -> TwitterProfile
-export function analyzeProfile(tweets: Tweet[], pinnedTweet: Tweet | null, profileRaw: TwitterProfile): AnalyticsData {
+export function analyzeProfile(
+    tweets: Tweet[], 
+    pinnedTweet: Tweet | null, 
+    replies: ReplyTweet[], 
+    profileRaw: TwitterProfile
+): AnalyticsData {
     // 1. Lọc Data
     const originalTweets = tweets.filter(t => t.type !== 'retweet');
     const totalViews = originalTweets.reduce((acc, t) => acc + t.views, 0);
@@ -311,6 +414,55 @@ export function analyzeProfile(tweets: Tweet[], pinnedTweet: Tweet | null, profi
     // Nếu tất cả đều 0 view thì giữ Mixed
     if (maxTypeVal === 0) bestType = 'Mixed';
 
+    /// --- REPLY ---
+    const replyStrategy = analyzeReplyStrategy(replies, profileRaw.handle);
+
+    // --- TOPIC CLOUD LOGIC (Hybrid) ---
+    // --- KEYWORD EXTRACTION (MANUAL & ACCURATE) ---
+    const tagMapCloud: Record<string, number> = {};
+    const keywordMap: Record<string, number> = {};
+
+    originalTweets.forEach(t => {
+        // 1. Đếm Hashtag (Giữ nguyên)
+        t.hashtags.forEach(tag => {
+            tagMapCloud[tag] = (tagMapCloud[tag] || 0) + 1;
+        });
+
+        // 2. Đếm Keyword từ text
+        if (t.text) {
+            const cleanText = t.text
+                .toLowerCase()
+                .replace(/https?:\/\/\S+/g, '') // Bỏ link
+                .replace(/@\w+/g, '')           // Bỏ mention
+                .replace(/#\w+/g, '')           // Bỏ hashtag
+                .replace(/[^\w\s]/g, '');       // Bỏ ký tự đặc biệt
+
+            const words = cleanText.split(/\s+/);
+            
+            words.forEach(w => {
+                // Chỉ lấy từ > 3 ký tự và không nằm trong stop words
+                if (w.length > 3 && !STOP_WORDS.has(w) && isNaN(Number(w))) {
+                    const capitalized = w.charAt(0).toUpperCase() + w.slice(1);
+                    keywordMap[capitalized] = (keywordMap[capitalized] || 0) + 1;
+                }
+            });
+        }
+    });
+
+    // 3. Merge & Sort
+    const hashtagsArr = Object.entries(tagMapCloud)
+        .map(([tag, count]) => ({ text: `#${tag}`, count, type: 'hashtag' as const }));
+
+    const keywordsArr = Object.entries(keywordMap)
+        .map(([text, count]) => ({ text, count, type: 'keyword' as const }));
+
+    // Lấy Top 15 từ xuất hiện nhiều nhất
+    const topicList = [...hashtagsArr, ...keywordsArr]
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 15);
+        
+
+
     return {
         profile: {
             handle: `@${profileRaw.handle}`,
@@ -362,7 +514,7 @@ export function analyzeProfile(tweets: Tweet[], pinnedTweet: Tweet | null, profi
             list: topList
         },
         network: { topMentions },
-        topics: { topHashtags },
+        topics: { list: topicList },
         traffic: { topDomains },
         habits: {
             bestHour: bestHourStr,
@@ -382,89 +534,9 @@ export function analyzeProfile(tweets: Tweet[], pinnedTweet: Tweet | null, profi
             viralScore: viralScore || 5
         },
         signal: signal,
+        replyStrategy: replyStrategy,
     };
 }
 
 
-// [!code update] Hàm analyzeReplyStrategy đã lược bỏ BIG_ACCOUNTS
-export function analyzeReplyStrategy(replies: any[], originalHandle: string) {
-    // Guard clause
-    if (!replies || replies.length === 0) {
-        return {
-            replyCount: 0,
-            avgLength: 0,
-            archetype: "N/A",
-            metrics: { spamScore: 0, valueScore: 0 },
-            topTargets: []
-        };
-    }
-
-    let shortReplies = 0;      // < 30 ký tự
-    let valueReplies = 0;      // > 50 ký tự
-    let linkReplies = 0;       // Có link
-    let totalLen = 0;
-    
-    // Map đếm tần suất reply
-    const replyTargetMap: Record<string, { count: number; avatar: string; handle: string }> = {};
-
-    replies.forEach(t => {
-        const text = t.text || "";
-        const len = text.length;
-        totalLen += len;
-
-        // 1. Phân loại chất lượng
-        if (len < 30 && !t.hasMedia) shortReplies++;
-        else if (len > 50) valueReplies++;
-
-        if (t.outboundLinks && t.outboundLinks.length > 0) linkReplies++;
-
-        // 2. Phân tích đối tượng (Vẫn dùng originalHandle để lọc self-reply)
-        const target = t.replyTo; 
-        if (target && target.authorHandle) {
-            const handle = target.authorHandle;
-
-            // Bỏ qua nếu tự reply chính mình
-            if (handle.toLowerCase() !== originalHandle.toLowerCase()) {
-                if (!replyTargetMap[handle]) {
-                    replyTargetMap[handle] = { 
-                        count: 0, 
-                        avatar: target.authorAvatar || "", 
-                        handle: handle 
-                    };
-                }
-                replyTargetMap[handle].count++;
-            }
-        }
-    });
-
-    // Tổng hợp
-    const count = replies.length;
-    const avgLength = Math.round(totalLen / count);
-    
-    // Top 3 người hay tương tác
-    const topTargets = Object.values(replyTargetMap)
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 3);
-
-    // Định danh tính cách (Archetype)
-    let archetype = "Conversationalist"; // Mặc định
-    
-    const spamRatio = (shortReplies + linkReplies * 2) / count;
-    const valueRatio = valueReplies / count;
-
-    if (linkReplies > 3) archetype = "Link Spammer";
-    else if (spamRatio > 0.6) archetype = "NPC / Bot"; // >60% là reply ngắn/nhạt
-    else if (valueRatio > 0.5) archetype = "Value Builder"; // >50% reply có tâm
-
-    return {
-        replyCount: count,
-        avgLength,
-        archetype,
-        metrics: {
-            spamScore: Math.min(Math.round(spamRatio * 100), 100),
-            valueScore: Math.min(Math.round(valueRatio * 100), 100),
-        },
-        topTargets 
-    };
-}
 

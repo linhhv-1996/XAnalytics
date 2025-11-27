@@ -1,8 +1,12 @@
+/* src/app.css */
+
 /* GLOBAL STYLES */
 body { 
     font-family: 'Inter', sans-serif; 
-    background: radial-gradient(circle at top, #e0f2fe 0, #f9fafb 45%, #f9fafb 100%);
+    background-color: #f8fafc; /* Slate-50 */
+    color: #0f172a; /* Slate-900 */
 }
+
 .font-mono { font-family: 'JetBrains Mono', monospace; }
 ::-webkit-scrollbar { width: 6px; background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -11,39 +15,48 @@ body {
 .bg-grid-light {
   background-size: 44px 44px;
   background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  opacity: 0.4; 
   mask-image: radial-gradient(circle at top, rgba(255, 255, 255, 0.9), transparent 65%);
 }
 
-/* UI Cards (Thay thế Glass Panel cũ) */
+/* UI Cards (Tăng độ đậm Border) */
 .card {
-  background: rgba(255, 255, 255, 0.98);
+  background: #ffffff;
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+  
+  /* [!code fix] Đổi sang Slate-300 (#cbd5e1) cho rõ nét khối */
+  border: 1px solid #cbd5e1;
+  
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
   transition: all 0.2s ease;
 }
 
 .card-soft {
-  background: rgba(255, 255, 255, 0.98);
+  background: #ffffff;
   border-radius: 14px;
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  
+  /* [!code fix] Card nhỏ cũng tăng border luôn */
+  border: 1px solid #cbd5e1;
+  
   transition: all 0.2s ease;
 }
 
 .card:hover, .card-soft:hover {
-    border-color: rgba(148, 163, 184, 0.4);
+    /* [!code fix] Hover thì đậm lên Slate-400 (#94a3b8) */
+    border-color: #94a3b8;
+    
     transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 }
 
-/* Heatmap */
+/* ... (Các phần Heatmap & Animation giữ nguyên) ... */
 .heatmap-grid-30 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .heatmap-cell { width: 100%; padding-top: 100%; position: relative; border-radius: 3px; }
 .heatmap-cell-inner { position: absolute; inset: 0; border-radius: 3px; }
 .heatmap-wrapper { max-width: 260px; }
 
-/* Animation */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }

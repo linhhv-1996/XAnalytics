@@ -76,7 +76,7 @@
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-slate-100"></div>
                 </div>
-                <div class="relative flex justify-center text-[10px] uppercase tracking-widest">
+                <div class="relative flex justify-center text-[11px] uppercase tracking-widest">
                     <span class="bg-white px-3 text-slate-400 font-mono">Secure Access</span>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 </div>
                 
                 <a href="/" class="inline-flex items-center gap-2 text-[12px] text-slate-400 hover:text-emerald-600 transition-colors group">
-                    <i class="fa-solid fa-arrow-left text-[10px] group-hover:-translate-x-1 transition-transform"></i>
+                    <i class="fa-solid fa-arrow-left text-[11px] group-hover:-translate-x-1 transition-transform"></i>
                     Back to home
                 </a>
             </div>

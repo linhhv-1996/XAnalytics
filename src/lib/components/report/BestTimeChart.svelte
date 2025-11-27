@@ -15,7 +15,7 @@
     <div class="text-center my-3">
         {#if habits.bestHour !== "N/A"}
             <div class="text-xl font-bold text-slate-900 font-mono">{habits.bestHour} (UTC)</div>
-            <div class="text-[10px] text-slate-500">{habits.bestHourMetric}</div>
+            <div class="text-[11px] text-slate-500">{habits.bestHourMetric}</div>
         {:else}
             <div class="text-sm text-slate-400 py-2">Not enough data</div>
         {/if}

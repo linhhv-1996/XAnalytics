@@ -53,7 +53,7 @@
                 {user.email || user.name}
               </div>
               <button on:click={handleLogout} type="button" class="w-full text-left px-3 py-1.5 hover:bg-slate-50 flex items-center gap-2 text-rose-500">
-                <i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
+                <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
                 <span>Logout</span>
               </button>
             </div>

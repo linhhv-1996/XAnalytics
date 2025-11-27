@@ -1,20 +1,31 @@
-// src/routes/api/analytics/+server.ts
-import { json } from '@sveltejs/kit';
+// src/routes/report/[handle]/+page.server.ts
+import { error, redirect } from '@sveltejs/kit';
 import { fetchTwitterData } from '$lib/server/twitter';
-import { analyzeProfile } from '$lib/server/analytics'; // Import file mới tạo
-import { analyzeTopics } from '$lib/server/ai';
-import type { AITopic } from '$lib/types';
+import { analyzeProfile } from '$lib/server/analytics';
+import type { PageServerLoad } from './$types';
 
-export const GET = async ({ url }) => {
-    const handle = url.searchParams.get('handle');
-    if (!handle) return json({ error: 'Handle required' }, { status: 400 });
+export const load: PageServerLoad = async ({ params, setHeaders, locals, url }) => {
+    // [!code fix] 1. BẮT BUỘC LOGIN
+    // Kiểm tra xem user đã đăng nhập chưa (từ hooks.server.ts)
+    if (!locals.user) {
+        // Nếu chưa, đá về trang login kèm theo link hiện tại để login xong quay lại đúng chỗ
+        throw redirect(302, `/login?redirectTo=${encodeURIComponent(url.pathname)}`);
+    }
+
+    const handle = params.handle;
 
     try {
-        // 1. Lấy dữ liệu (Giữ nguyên flow)
-        // const { profile, tweets, pinnedTweet, reply } = await fetchTwitterData(handle);
+        // 2. Fetch dữ liệu (Server-side)
+        const { profile, tweets, pinnedTweet, reply } = await fetchTwitterData(handle);
 
-        // 2. Tính toán (Thay AI bằng Logic thống kê)
-        // const insights = analyzeProfile(tweets, pinnedTweet, reply, profile);
+        // 3. Phân tích
+        const insights = analyzeProfile(tweets, pinnedTweet, reply, profile);
+
+        // (Option) Cache control: Cache 5 phút (300s) ở phía Client/CDN
+        // Giúp F5 không bị gọi lại API Twitter liên tục nếu vừa load xong
+        setHeaders({
+            'cache-control': 'private, max-age=300' // Dùng 'private' vì dữ liệu này sau login mới thấy
+        });
 
         const fake = {
             "profile": {
@@ -728,12 +739,18 @@ export const GET = async ({ url }) => {
             }
         }
 
-        // 3. Trả về JSON (Frontend sẽ nhận cục này)
-        // return json(insights);
-        return json(fake);
+        return {
+            analyticsData: insights
+        };
+        // return {
+        //     analyticsData: fake
+        // };
 
-    } catch (error: any) {
-        console.error("Analytics Error:", error);
-        return json({ error: error.message }, { status: 500 });
+
+    } catch (e: any) {
+        console.error("Load Report Error:", e);
+        throw error(404, {
+            message: e.message || 'Profile not found or Account is private'
+        });
     }
 };

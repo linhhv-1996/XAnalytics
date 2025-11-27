@@ -15,21 +15,21 @@
     </h3>
     
     <div class="space-y-3">
-        <div class="flex items-center justify-between text-[10px] text-slate-600">
+        <div class="flex items-center justify-between text-[11px] text-slate-600">
             <span>Short (&lt;140c)</span>
             <div class="flex flex-col items-end">
                 <span class="font-mono {getScoreColor(data.short.score)}">{data.short.score}x Avg</span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between text-[10px] text-slate-600">
+        <div class="flex items-center justify-between text-[11px] text-slate-600">
             <span>Medium</span>
             <div class="flex flex-col items-end">
                 <span class="font-mono {getScoreColor(data.medium.score)}">{data.medium.score}x Avg</span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between text-[10px] text-slate-600">
+        <div class="flex items-center justify-between text-[11px] text-slate-600">
             <span>Long / Threads</span>
             <div class="flex flex-col items-end">
                 <span class="font-mono {getScoreColor(data.long.score)}">{data.long.score}x Avg</span>

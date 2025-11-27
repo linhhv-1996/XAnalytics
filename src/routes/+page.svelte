@@ -1,50 +1,37 @@
 <script lang="ts">
-  import DemoReport from "$lib/components/DemoReport.svelte";
-  import AudienceFunnel from "$lib/components/report/AudienceFunnel.svelte";
-  import BaselinePerformance from "$lib/components/report/BaselinePerformance.svelte";
-  import BestTimeChart from "$lib/components/report/BestTimeChart.svelte";
-  import LengthStrategyCard from "$lib/components/report/LengthStrategyCard.svelte";
-  import MonetizationCard from "$lib/components/report/MonetizationCard.svelte";
-  import ProfileCard from "$lib/components/report/ProfileCard.svelte";
-  import ReplyStrategyCard from "$lib/components/report/ReplyStrategyCard.svelte";
-  import SignalSnapshot from "$lib/components/report/SignalSnapshot.svelte";
-  import TopicCloudCard from "$lib/components/report/TopicCloudCard.svelte";
-  import TopViralPosts from "$lib/components/report/TopViralPosts.svelte";
-  import type { AnalyticsData } from "$lib/types";
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
+    import DemoReport from "$lib/components/DemoReport.svelte";
 
-  let inputValue = "";
-  let isLoading = false;
-  let analyticsData: AnalyticsData | null = null;
-  let error: string | null = null;
+    let inputValue = "";
+    let isLoading = false;
 
-  async function handleAnalyze() {
-    if (!inputValue.trim()) return;
-    isLoading = true;
-    error = null;
-    let handle = inputValue.trim();
-    if (handle.startsWith("@")) handle = handle.slice(1);
-    if (handle.includes("x.com/")) handle = handle.split("x.com/")[1].split("/")[0];
-    if (handle.includes("twitter.com/")) handle = handle.split("twitter.com/")[1].split("/")[0];
+    async function handleAnalyze() {
+        if (!inputValue.trim()) return;
+        
+        isLoading = true;
+        let handle = inputValue.trim();
+        if (handle.startsWith("@")) handle = handle.slice(1);
+        if (handle.includes("x.com/")) handle = handle.split("x.com/")[1].split("/")[0];
+        if (handle.includes("twitter.com/")) handle = handle.split("twitter.com/")[1].split("/")[0];
+        
+        // [!code fix] CHECK LOGIN CLIENT-SIDE
+        // Nếu chưa có user trong store -> Chuyển hướng ngay lập tức, KHÔNG set isLoading
+        if (!$page.data.user) {
+            const returnUrl = `/report/${handle}`;
+            await goto(`/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+            return;
+        }
 
-    try {
-      const res = await fetch(`/api/analytics?handle=${handle}`);
-      const data = await res.json();
-      if (res.ok) {
-        analyticsData = data;
-      } else {
-        error = data.error || "Failed to analyze profile";
-      }
-    } catch (e) {
-      console.error(e);
-      error = "Something went wrong. Please try again.";
-    } finally {
-      isLoading = false;
+        // [!code fix] Chỉ hiện loading khi chắc chắn user đã đăng nhập và đang fetch data thật
+        isLoading = true;
+        await goto(`/report/${handle}`);
+
     }
-  }
 </script>
 
-<main class="max-w-5xl mx-auto px-4 pt-10 pb-12 relative z-10">
-  {#if isLoading}
+
+{#if isLoading}
     <div class="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-sm animate-fade-in">
       <div class="card p-6 rounded-2xl flex flex-col items-center gap-4 border border-slate-200 shadow-2xl">
         <div class="relative w-10 h-10">
@@ -56,8 +43,9 @@
         </div>
       </div>
     </div>
-  {/if}
+{/if}
 
+<main class="max-w-5xl mx-auto px-4 pt-10 pb-12 relative z-10">
   <section class="text-center mb-14 relative">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50/80 text-emerald-700 text-[11px] font-mono uppercase tracking-[0.16em] animate-fade-in-up">
       <span class="relative flex h-2 w-2">
@@ -97,17 +85,12 @@
           disabled={isLoading}
           class="ml-1 h-9 px-4 rounded-xl bg-slate-900 text-[12px] font-semibold text-white flex items-center gap-1.5 shadow-sm hover:bg-slate-800 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
         >
-          <span>{isLoading ? "Scanning..." : "Decode strategy"}</span>
-          {#if !isLoading}
-            <i class="fa-solid fa-arrow-right -rotate-45 text-[11px]"></i>
-          {/if}
+          <span>{isLoading ? "Scanning..." : "Analyze"}</span>
+                    {#if !isLoading}
+                        <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i>
+                    {/if}
         </button>
       </div>
-      {#if error}
-        <div class="text-rose-500 text-xs mt-3 bg-rose-50 inline-block px-3 py-1 rounded border border-rose-100">
-          <i class="fa-solid fa-triangle-exclamation mr-1"></i> {error}
-        </div>
-      {/if}
     </form>
 
     <div class="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-500 opacity-80">
@@ -117,45 +100,5 @@
     </div>
   </section>
 
-  {#if analyticsData}
-    <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up">
-      <div class="space-y-4">
-        <ProfileCard
-          profile={analyticsData.profile}
-          habits={analyticsData.habits}
-          network={analyticsData.network}
-          traffic={analyticsData.traffic}
-        />
-
-          <MonetizationCard data={analyticsData.contentStrategy.monetization} />
-          <LengthStrategyCard data={analyticsData.contentStrategy.length} />
-       
-
-      </div>
-
-      <div class="space-y-4">
-        <SignalSnapshot signal={analyticsData.signal} profileAvatar={analyticsData.profile.avatarUrl} />
-        
-        {#if analyticsData.topContent.list.length > 0}
-          <TopViralPosts posts={analyticsData.topContent.list} />
-        {/if}
-        
-        <BaselinePerformance baseline={analyticsData.baseline} />
-        <TopicCloudCard />
-        <ReplyStrategyCard />
-
-        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MonetizationCard data={analyticsData.contentStrategy.monetization} />
-          <LengthStrategyCard data={analyticsData.contentStrategy.length} />
-        </div> -->
-        
-        <!-- <div class="grid grid-cols-1 md:grid-cols-[1.4fr_1.6fr] gap-4"> -->
-            <BestTimeChart habits={analyticsData.habits} />
-            <AudienceFunnel funnel={analyticsData.funnel} />
-        <!-- </div> -->
-      </div>
-    </div>
-  {:else}
-    <DemoReport />
-  {/if}
+  <DemoReport />
 </main>

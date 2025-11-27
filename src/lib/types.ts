@@ -94,7 +94,8 @@ export interface AnalyticsData {
             short: { count: number; avgViews: number; score: number };
             medium: { count: number; avgViews: number; score: number };
             long: { count: number; avgViews: number; score: number };
-            bestType: 'Short' | 'Medium' | 'Long' | 'Mixed';
+            // bestType: 'Short' | 'Medium' | 'Long' | 'Mixed';
+            bestType: string;
         };
     };
     
@@ -130,7 +131,12 @@ export interface AnalyticsData {
         topMentions: { handle: string; count: number }[]; // Top bạn bè
     };
     topics: {
-        topHashtags: { tag: string; count: number }[];    // Top chủ đề
+        list: { 
+            text: string; 
+            count: number; 
+            // type: 'hashtag' | 'keyword' 
+            type: string;
+        }[];
     };
     traffic: {
         topDomains: { domain: string; count: number }[];  // Nơi dẫn link
@@ -143,7 +149,7 @@ export interface AnalyticsData {
             date: string;   // Format: "Nov 25"
             fullDate: string; // Format: "2025-11-25"
             count: number;
-            level: 0 | 1 | 2 | 3; // Mức độ đậm nhạt
+            level: number;
         }[];
         hourlyPerf: {
             hour: number;      // 0-23
@@ -177,8 +183,25 @@ export interface AnalyticsData {
         multiplier: string; // "4.2x" (So với baseline)
         url: string;
         hasMedia: boolean;
-        mediaType: 'image' | 'video' | 'mixed' | 'none';
+        // mediaType: 'image' | 'video' | 'mixed' | 'none';
+        mediaType: string;
     } | null;
+
+    replyStrategy: {
+        replyCount: number;
+        avgLength: number;
+        archetype: string;
+        metrics: {
+            spamScore: number;
+            valueScore: number;
+            neutralScore: number;
+        };
+        topTargets: {
+            handle: string;
+            count: number;
+            avatar: string;
+        }[];
+    };
 }
 
 
@@ -205,5 +228,14 @@ export interface ReplyTweet {
 
     // Context (Reply ai, bài gốc nội dung gì)
     replyTo: ReplyContext;
+}
+
+
+
+// Interface trả về từ AI
+export interface AITopic {
+    text: string;
+    count: number;
+    type: 'hashtag' | 'keyword';
 }
 
