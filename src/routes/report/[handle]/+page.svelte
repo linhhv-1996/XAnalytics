@@ -16,6 +16,9 @@
     import RecentActivityCard from '$lib/components/report/RecentActivityCard.svelte';
     import NetworkRadarCard from '$lib/components/report/NetworkRadarCard.svelte';
     import TrafficFlowCard from '$lib/components/report/TrafficFlowCard.svelte';
+    import NewFeaturesMockup from '$lib/components/report/NewFeaturesMockup.svelte';
+    import AudienceOverlapCard from '$lib/components/report/AudienceOverlapCard.svelte';
+    import PersonalInteractionsCard from '$lib/components/report/PersonalInteractionsCard.svelte';
 
     // State
     let analyticsData: any = null;
@@ -196,7 +199,8 @@
                 myHandle={analyticsData.profile.handle} 
              />
 
-            
+            <!-- <AudienceOverlapCard targetHandle="elonMusk" />
+            <PersonalInteractionsCard targetHandle="elonMusk"/> -->
             
         </div>
     </div>

@@ -118,6 +118,11 @@
       </div>
     </form>
 
+    <!-- <a href="/compare" class="mt-5 inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-emerald-600 transition-colors group">
+        <i class="fa-solid fa-arrows-left-right text-emerald-500 group-hover:scale-110 transition-transform"></i>
+        Hoặc **So sánh hai Handle** cùng lúc.
+    </a> -->
+
     <div class="mt-12 max-w-2xl mx-auto overflow-hidden relative">
         <p class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-4 text-center">
             Recent Analysis
