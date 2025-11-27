@@ -161,8 +161,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up">
         <div class="space-y-4">
             <ProfileCard profile={analyticsData.profile} />
-
             <RecentActivityCard heatmap={analyticsData.habits.heatmap} />
+            <BestTimeChart habits={analyticsData.habits} />
 
             <NetworkRadarCard network={analyticsData.network} />
             <TrafficFlowCard traffic={analyticsData.traffic} />
@@ -172,8 +172,7 @@
             {/if}
             
             <AudienceFunnel funnel={analyticsData.funnel} />
-            <MonetizationCard data={analyticsData.contentStrategy.monetization} />
-            <LengthStrategyCard data={analyticsData.contentStrategy.length} />
+            
         </div>
 
         <div class="space-y-4">
@@ -188,13 +187,16 @@
                 topics={analyticsData.topics.list} 
                 handle={analyticsData.profile.handle} 
             />
+
+            <MonetizationCard data={analyticsData.contentStrategy.monetization} />
+            <LengthStrategyCard data={analyticsData.contentStrategy.length} />
             
             <ReplyStrategyCard 
                 data={analyticsData.replyStrategy} 
                 myHandle={analyticsData.profile.handle} 
              />
 
-            <BestTimeChart habits={analyticsData.habits} />
+            
             
         </div>
     </div>
