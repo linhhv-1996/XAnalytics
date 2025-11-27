@@ -3,6 +3,17 @@
     import { page } from '$app/stores';
     import DemoReport from "$lib/components/DemoReport.svelte";
 
+    const recentAnalyses = [
+        { name: "@elonmusk", avatar: "https://unavatar.io/twitter/elonmusk" },
+        { name: "@levelsio", avatar: "https://unavatar.io/twitter/levelsio" },
+        { name: "@hormozi", avatar: "https://unavatar.io/twitter/AlexHormozi" },
+        { name: "@paulg", avatar: "https://unavatar.io/twitter/paulg" },
+        { name: "@sama", avatar: "https://unavatar.io/twitter/sama" },
+        { name: "@naval", avatar: "https://unavatar.io/twitter/naval" },
+        { name: "@tibo_maker", avatar: "https://unavatar.io/twitter/tibo_maker" },
+        { name: "@pieterlevels", avatar: "https://unavatar.io/twitter/pieterlevels" }
+    ];
+
     let inputValue = "";
     let isLoading = false;
 
@@ -23,27 +34,25 @@
         }
 
         // 3. Bật Loading ngay lập tức
-        isLoading = true; //
-        
-        // FIX UI FREEZE & RE-ANALYSIS
-        // 1. setTimeout(0) cho phép browser vẽ UI (isLoading=true) trước khi gọi goto.
-        // 2. Thêm ?ref=${Date.now()} để force reload page.server.ts (fix cùng handle).
-        setTimeout(async () => {
-            try {
-                await goto(`/report/${handle}?ref=${Date.now()}`);
-            } catch (e) {
-                // Nếu navigation bị lỗi, tắt loading.
-            } finally {
-                // Đảm bảo loading tắt sau khi load xong (quan trọng khi component được reuse).
-                isLoading = false;
-            }
-        }, 0);
+        await goto(`/report/${handle}?ref=${Date.now()}`);
         
         // Reset input ngay lập tức
         inputValue = "";
     }
 </script>
 
+<style>
+    @keyframes scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-scroll {
+        animation: scroll 30s linear infinite;
+    }
+    .animate-scroll:hover {
+        animation-play-state: paused;
+    }
+</style>
 
 {#if isLoading}
     <div class="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-sm animate-fade-in">
@@ -69,10 +78,12 @@
       Live Intelligence v2.0
     </div>
 
-    <h1 class="max-w-3xl mx-auto mt-5 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
-      Reverse engineer the
-      <span class="bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 bg-clip-text text-transparent">growth strategy</span>
-      of any profile.
+    <h1 class="max-w-3xl mx-auto mt-2 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight text-slate-600">
+        Reverse engineer the
+        <span class="text-slate-900 font-black">
+            growth strategy
+        </span>
+        of any profile.
     </h1>
 
     <p class="max-w-2xl mx-auto mt-4 text-[13px] sm:text-[15px] text-slate-600 leading-relaxed mb-8">
@@ -107,10 +118,21 @@
       </div>
     </form>
 
-    <div class="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-500 opacity-80">
-      <span class="flex items-center gap-1"><i class="fa-solid fa-check text-emerald-500"></i> Creators & brands</span>
-      <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> AI pattern recognition</span>
-      <span class="flex items-center gap-1"><i class="fa-regular fa-circle-dot text-sky-500"></i> No API keys needed</span>
+    <div class="mt-12 max-w-2xl mx-auto overflow-hidden relative">
+        <p class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-4 text-center">
+            Recent Analysis
+        </p>
+        
+        <div class="w-full overflow-hidden mask-edges">
+            <div class="flex items-center gap-3 animate-scroll w-max py-2">
+                {#each [...recentAnalyses, ...recentAnalyses] as item}
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 text-[12px] font-semibold select-none whitespace-nowrap hover:border-slate-400 transition-colors cursor-default">
+                        <img src={item.avatar} alt={item.name} class="w-5 h-5 rounded-full bg-slate-100 object-cover grayscale opacity-80" loading="lazy">
+                        <span>{item.name}</span>
+                    </div>
+                {/each}
+            </div>
+        </div>
     </div>
   </section>
 

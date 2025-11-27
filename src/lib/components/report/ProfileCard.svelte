@@ -9,10 +9,10 @@
     // Helper màu cho Heatmap (Light Theme)
     function getLevelColor(level: number): string {
         switch (level) {
-            case 3: return 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]';
-            case 2: return 'bg-emerald-300';
-            case 1: return 'bg-emerald-100';
-            default: return 'bg-slate-100';
+            case 3: return 'bg-emerald-600 border-emerald-600'; // Đậm nhất (Deep Emerald)
+            case 2: return 'bg-emerald-400 border-emerald-400'; // Vừa
+            case 1: return 'bg-emerald-200 border-emerald-200'; // Nhạt
+            default: return 'bg-slate-100 border-slate-100';   // Nền xám
         }
     }
 
@@ -42,7 +42,7 @@
         <div class="px-4 pb-4 -mt-10 flex-1 flex flex-col relative z-10">
             <div class="flex justify-between items-end">
                 <img src={profile.avatarUrl.replace('_normal', '_400x400')} class="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover bg-white" alt="{profile.name}">
-                <span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2 py-1 rounded-full border border-emerald-200 uppercase tracking-wide mb-1">{profile.grade} Tier</span>
+                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full border border-emerald-200 uppercase tracking-wide mb-1">{profile.grade} Tier</span>
             </div>
             <div class="mt-3">
                 <h2 class="flex items-center gap-1.5 text-[15px] font-semibold text-slate-900">
@@ -52,9 +52,9 @@
             </div>
             <p class="mt-2 text-[11px] text-slate-600 leading-relaxed line-clamp-3">{@html profile.bio}</p>
             <div class="mt-3 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
-                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.following}</div><div class="text-[11px] uppercase tracking-wide text-slate-500">Following</div></div>
-                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.followers}</div><div class="text-[11px] uppercase tracking-wide text-slate-500">Followers</div></div>
-                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.tweetsCount}</div><div class="text-[11px] uppercase tracking-wide text-slate-500">Posts</div></div>
+                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.following}</div><div class="text-[10px] uppercase tracking-wide text-slate-500">Following</div></div>
+                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.followers}</div><div class="text-[10px] uppercase tracking-wide text-slate-500">Followers</div></div>
+                <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.tweetsCount}</div><div class="text-[10px] uppercase tracking-wide text-slate-500">Posts</div></div>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@
                         <div class="heatmap-cell group cursor-pointer relative">
                             <div class="heatmap-cell-inner {getLevelColor(day.level)} group-hover:outline group-hover:outline-[1px] group-hover:outline-emerald-500/80 transition-all duration-200"></div>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20">
-                                <div class="bg-slate-900 text-white text-[11px] px-2 py-1 rounded shadow-xl font-mono whitespace-nowrap">
+                                <div class="bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-xl font-mono whitespace-nowrap">
                                     <div class="font-bold">{day.date}</div>
                                     <div class="text-slate-300">{day.count} post{day.count !== 1 ? 's' : ''}</div>
                                 </div>
@@ -109,7 +109,7 @@
                 {#each network.topMentions as mention, i}
                     <div class="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-slate-50 transition-colors">
                         <div class="flex items-center gap-2 min-w-0">
-                            <span class="w-4 text-[11px] text-slate-400 font-mono">#{i + 1}</span>
+                            <span class="w-4 text-[10px] text-slate-400 font-mono">#{i + 1}</span>
                             <a href="https://x.com/{mention.handle}" target="_blank" rel="noopener noreferrer" class="text-sky-600 font-medium truncate hover:underline">@{mention.handle}</a>
                         </div>
                         <span class="text-[9px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono">{mention.count}x</span>
@@ -134,7 +134,7 @@
                 {#each traffic.topDomains as domain, i}
                     <div class="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-slate-50 transition-colors">
                         <div class="flex items-center gap-2 min-w-0">
-                            <span class="w-4 text-[11px] text-slate-400 font-mono">#{i + 1}</span>
+                            <span class="w-4 text-[10px] text-slate-400 font-mono">#{i + 1}</span>
                             {#if getDomainLink(domain.domain)}
                                 <a href={getDomainLink(domain.domain)} target="_blank" rel="noopener noreferrer" class="text-slate-900 truncate hover:text-emerald-600 hover:underline">{domain.domain}</a>
                             {:else}
