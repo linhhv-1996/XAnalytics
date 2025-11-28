@@ -402,3 +402,129 @@ export async function fetchVipConnections(userName: string) {
         return [];
     }
 }
+
+
+/**
+ * Lấy danh sách ID mà user đang follow.
+ * Cố gắng lấy 1000 ID (2 request x 500).
+ */
+async function getFollowingIds(handle: string, maxCount: number = 1000): Promise<Set<string>> {
+    let ids = new Set<string>();
+    let cursor: string | undefined;
+    const batchSize = 500; // API limit mỗi lần gọi
+
+    // Loop tối đa 2 lần để lấy 1000 IDs
+    for (let i = 0; i < Math.ceil(maxCount / batchSize); i++) {
+        try {
+            const cursorParam = cursor ? `&cursor=${encodeURIComponent(cursor)}` : '';
+            const url = `https://${API_HOST}/following-ids?username=${handle}&count=${batchSize}${cursorParam}`;
+            
+            const res = await fetch(url, fetchOptions);
+            if (!res.ok) break;
+
+            const data = await res.json();
+            const newIds = data.ids || [];
+            
+            if (newIds.length === 0) break;
+
+            newIds.forEach((id: string) => ids.add(id));
+
+            // Lấy cursor cho trang sau
+            cursor = data.next_cursor_str;
+            if (!cursor || cursor === "0") break;
+
+            // Nghỉ một chút để đỡ bị rate limit
+            if (i < 1) await sleep(500);
+
+        } catch (e) {
+            console.error(`[API] Error fetching following for ${handle}:`, e);
+            break;
+        }
+    }
+
+    return ids;
+}
+
+
+/**
+ * Lấy thông tin chi tiết của một danh sách User ID (để hiển thị avatar/tên)
+ */
+async function getUsersDetails(ids: string[]) {
+    if (ids.length === 0) return [];
+    
+    // Chỉ lấy thông tin 12 người chung đầu tiên để hiển thị cho đỡ tốn quota
+    const topIds = ids.slice(0, 12); 
+    const idsStr = topIds.join(',');
+    
+    try {
+        const res = await fetch(`https://${API_HOST}/get-users?users=${idsStr}`, fetchOptions);
+        const data = await res.json();
+        
+        // Cấu trúc response có thể khác nhau tùy endpoint, cần check kỹ
+        const users = data.result?.data?.users || data.users || []; 
+
+        return users.map((u: any) => {
+            const r = u.result || u;
+            const legacy = r.legacy;
+            if (!legacy) return null;
+
+            return {
+                handle: legacy.screen_name,
+                name: legacy.name,
+                avatar: legacy.profile_image_url_https,
+                followers: legacy.followers_count,
+                isVerified: r.is_blue_verified === true || legacy.verified === true
+            };
+        }).filter((u: any) => u !== null);
+
+    } catch (e) {
+        console.error("[API] Error fetching user details:", e);
+        return [];
+    }
+}
+
+
+/**
+ * Hàm phân tích mối quan hệ (Mutuals)
+ */
+export async function analyzeRelationship(handleA: string, handleB: string) {
+    // 1. Chạy song song lấy ID của cả 2 (Mỗi người 1000 ID)
+    const [setA, setB] = await Promise.all([
+        getFollowingIds(handleA, 1000),
+        getFollowingIds(handleB, 1000)
+    ]);
+
+    if (setA.size === 0 || setB.size === 0) {
+        throw new Error("Could not fetch following list (Account might be private or API limited)");
+    }
+
+    // 2. Tìm ID trùng nhau (Intersection)
+    const commonIds: string[] = [];
+    setA.forEach(id => {
+        if (setB.has(id)) {
+            commonIds.push(id);
+        }
+    });
+
+    // 3. Tính toán độ trùng lặp
+    // Công thức: (Số lượng chung / Tập nhỏ nhất) * 100
+    // Dùng tập nhỏ nhất để % trông cao hơn, tạo cảm giác "connected" hơn.
+    const minSize = Math.min(setA.size, setB.size);
+    const overlapPercent = minSize > 0 ? Math.round((commonIds.length / minSize) * 100) : 0;
+
+    // 4. Lấy chi tiết user chung (để hiển thị Avatar)
+    const commonVips = await getUsersDetails(commonIds);
+
+    // Sort VIPs: Ưu tiên hiển thị người nhiều follow (nếu API trả về có followers)
+    commonVips.sort((a: { followers: number; }, b: { followers: number; }) => b.followers - a.followers);
+
+    return {
+        overlapPercent,
+        totalCommon: commonIds.length,
+        commonVips,
+        scannedCountA: setA.size,
+        scannedCountB: setB.size
+    };
+}
+
+
