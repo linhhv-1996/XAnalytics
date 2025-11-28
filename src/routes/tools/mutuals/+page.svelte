@@ -80,6 +80,7 @@
                     <form on:submit|preventDefault={handleCheck} class="space-y-5">
                         
                         <div class="space-y-1">
+                            <!-- svelte-ignore a11y_label_has_associated_control -->
                             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Profile A</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -102,6 +103,7 @@
                         </div>
 
                         <div class="space-y-1">
+                            <!-- svelte-ignore a11y_label_has_associated_control -->
                             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Profile B</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
