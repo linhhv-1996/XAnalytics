@@ -1,7 +1,6 @@
 // src/lib/server/twitter.ts
 import { RAPIDAPI_KEY } from '$env/static/private';
 import type { Tweet, TwitterProfile, RawTwitterData, TweetType, ReplyContext, ReplyTweet } from '$lib/types';
-import { logData } from './debug';
 
 const API_HOST = 'twitter241.p.rapidapi.com';
 
@@ -14,6 +13,18 @@ const GLOBAL_IGNORE_LIST = new Set([
 
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const MAX_REPLY_BATCHES = 10;
+const MAX_BATCHES = 1;
+
+const fetchOptions = {
+    method: 'GET',
+    headers: {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': API_HOST
+    }
+};
+
 
 // --- CLEANER FUNCTIONS ---
 
@@ -95,7 +106,7 @@ function cleanTweet(t: any, isChild: boolean = false): Tweet | null {
  * Hàm parse JSON từ endpoint "Get User Replies"
  * @param jsonResponse cục JSON to đùng từ API
  */
-function parseUserReplies(jsonResponse: any): ReplyTweet[] {
+function parseUserReplies(jsonResponse: any, currentUserId: string): ReplyTweet[] {
     const instructions = jsonResponse?.result?.timeline?.instructions || [];
     const addEntries = instructions.find((i: any) => i.type === 'TimelineAddEntries');
 
@@ -104,43 +115,73 @@ function parseUserReplies(jsonResponse: any): ReplyTweet[] {
     const replies: ReplyTweet[] = [];
 
     addEntries.entries.forEach((entry: any) => {
-        // Chỉ xử lý các entry là Module hội thoại (Conversation)
+        // Chỉ xử lý Module hội thoại
         if (entry.content?.entryType === 'TimelineTimelineModule') {
             const items = entry.content.items;
 
-            // Cấu trúc chuẩn: [0] = Bài gốc (Parent), [1] = Bài reply (Child - User's tweet)
-            // Đôi khi conversation dài hơn 2, nhưng bài reply của user thường là cái cuối cùng trong list trả về hoặc cái thứ 2.
-            // Theo JSON mẫu của mày thì nó là cái thứ 2 (index 1).
+            // Cần ít nhất 2 item: [Context, MyReply]
             if (items && items.length >= 2) {
-                const targetRaw = items[0].item?.itemContent?.tweet_results?.result;
-                const replyRaw = items[1].item?.itemContent?.tweet_results?.result;
+                
+                // 1. LẤY CONTEXT TWEET (Bài ngữ cảnh - Item đầu tiên trong cụm)
+                const contextItem = items[0].item?.itemContent?.tweet_results?.result;
+                if (!contextItem) return;
 
-                // Kiểm tra dữ liệu hợp lệ (tránh null/undefined do tweet bị xóa)
-                if (targetRaw && replyRaw && replyRaw.legacy && targetRaw.legacy) {
+                const contextLegacy = contextItem.legacy;
+                if (!contextLegacy) return;
 
-                    // 1. Lấy thông tin bài gốc (Context)
-                    const targetCore = targetRaw.core?.user_results?.result?.legacy;
-                    const replyTo: ReplyContext = {
-                        id: targetRaw.rest_id,
-                        text: targetRaw.legacy.full_text,
-                        createdAt: targetRaw.legacy.created_at,
-                        authorHandle: targetCore?.screen_name || 'unknown',
-                        authorAvatar: targetCore?.profile_image_url_https || ''
-                    };
+                const contextAuthorId = contextItem.core?.user_results?.result?.rest_id || contextLegacy.user_id_str;
+                const contextReplyToUserId = contextLegacy.in_reply_to_user_id_str;
 
-                    // 2. Lấy thông tin bài Reply (Hành vi user)
-                    const replyLegacy = replyRaw.legacy;
+                // --- BỘ LỌC QUAN TRỌNG (FILTER LOGIC) ---
+                
+                // Rule 1: Nếu Context là bài của chính mình -> BỎ (Self-thread, seeding)
+                if (contextAuthorId === currentUserId) return;
+
+                // Rule 2: [FIX MỚI] Nếu Context là bài của người khác, NHƯNG nó đang reply mình
+                // -> Nghĩa là mình đang trả lời comment trong nhà mình (Inbound) -> BỎ
+                if (contextReplyToUserId === currentUserId) return;
+
+
+                // 2. TÌM BÀI REPLY CỦA MÌNH (Outbound)
+                const myItem = items.find((it: any) => {
+                    const res = it.item?.itemContent?.tweet_results?.result;
+                    const authorId = res?.core?.user_results?.result?.rest_id || res?.legacy?.user_id_str;
+                    
+                    // Là bài của mình VÀ không phải là bài context (đề phòng trùng)
+                    return authorId === currentUserId && res?.rest_id !== contextItem.rest_id;
+                });
+
+                if (!myItem) return;
+
+                const replyRaw = myItem.item.itemContent.tweet_results.result;
+                const replyLegacy = replyRaw?.legacy;
+                
+                if (replyLegacy) {
+                    // Lấy User Info của người mình reply trực tiếp để hiển thị
+                    const targetUser = contextItem.core?.user_results?.result?.legacy || {};
+                    
+                    // Lấy Outbound Links
+                    const entities = replyLegacy.entities || {};
+                    const urls = (entities.urls || []).map((u: any) => u.expanded_url);
+
                     const reply: ReplyTweet = {
                         id: replyRaw.rest_id,
-                        text: replyLegacy.full_text,
-                        createdAt: replyLegacy.created_at, // Format: "Wed Nov 26 07:38:53 +0000 2025"
+                        text: replyLegacy.full_text || "",
+                        createdAt: replyLegacy.created_at,
+                        outboundLinks: urls,
 
                         likes: replyLegacy.favorite_count || 0,
                         replies: replyLegacy.reply_count || 0,
                         retweets: replyLegacy.retweet_count || 0,
                         views: Number(replyRaw.views?.count || 0),
 
-                        replyTo: replyTo
+                        replyTo: {
+                            id: contextItem.rest_id,
+                            text: contextLegacy.full_text || "",
+                            createdAt: contextLegacy.created_at || "",
+                            authorHandle: targetUser.screen_name || 'unknown',
+                            authorAvatar: targetUser.profile_image_url_https || ''
+                        }
                     };
 
                     replies.push(reply);
@@ -152,20 +193,14 @@ function parseUserReplies(jsonResponse: any): ReplyTweet[] {
     return replies;
 }
 
+
 // --- MAIN FETCHER ---
 
 export async function fetchTwitterData(handle: string): Promise<RawTwitterData> {
     const cleanHandle = handle.toLowerCase().trim();
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': RAPIDAPI_KEY,
-            'x-rapidapi-host': API_HOST
-        }
-    };
 
     // 1. Get User Info
-    const userRes = await fetch(`https://${API_HOST}/user?username=${cleanHandle}`, options);
+    const userRes = await fetch(`https://${API_HOST}/user?username=${cleanHandle}`, fetchOptions);
     if (!userRes.ok) throw new Error('Failed to fetch user');
     const userData = await userRes.json();
     const userRaw = userData.result?.data?.user?.result;
@@ -177,12 +212,11 @@ export async function fetchTwitterData(handle: string): Promise<RawTwitterData> 
     let allTweetsRaw: Tweet[] = [];
     let pinnedTweetRaw: Tweet | null = null;
     let cursor: string | undefined;
-    const MAX_BATCHES = 4; // Lấy khoảng 40-50 bài
 
     for (let i = 0; i < MAX_BATCHES; i++) {
         try {
             const cursorParam = cursor ? `&cursor=${encodeURIComponent(cursor)}` : '';
-            const res = await fetch(`https://${API_HOST}/user-tweets?user=${profile.id}&count=20${cursorParam}`, options);
+            const res = await fetch(`https://${API_HOST}/user-tweets?user=${profile.id}&count=20${cursorParam}`, fetchOptions);
             if (!res.ok) break;
 
             const data = await res.json();
@@ -241,31 +275,60 @@ export async function fetchTwitterData(handle: string): Promise<RawTwitterData> 
         }
     }
 
-    // 3. Get Reply
-    const replies = await fetch(`https://${API_HOST}/user-replies?user=${profile.id}`, options);
-    if (!replies.ok) throw new Error('Failed to fetch user');
-    const replyRaw = await replies.json();
-    if (!replyRaw) throw new Error('User replies not found');
+    // 3. Get Reply (Updated: Loop to get ~100 items & Sleep)
+    let allReplies: ReplyTweet[] = [];
+    let replyCursor: string | undefined;
 
-    const cleanReplies = parseUserReplies(replyRaw);
+    for (let i = 0; i < MAX_REPLY_BATCHES; i++) {
+        try {
+            const cursorParam = replyCursor ? `&cursor=${encodeURIComponent(replyCursor)}` : '';
+            const res = await fetch(`https://${API_HOST}/user-replies?user=${profile.id}&count=20${cursorParam}`, fetchOptions);
+            
+            if (!res.ok) {
+                console.warn(`[API] Failed to fetch replies batch ${i + 1}`);
+                break;
+            }
 
-    return { profile, tweets: allTweetsRaw, pinnedTweet: pinnedTweetRaw, reply: cleanReplies };
+            const data = await res.json();
+            
+            // Parse ngay batch này
+            const batchReplies = parseUserReplies(data, profile.id);
+            allReplies = [...allReplies, ...batchReplies];
+
+            // Tìm Next Cursor để lật trang
+            const instructions = data.result?.timeline?.instructions || [];
+            let nextCursor: string | undefined;
+
+            // Logic tìm cursor trong TimelineAddEntries (giống logic lấy Tweets)
+            const addEntries = instructions.find((inst: any) => inst.type === 'TimelineAddEntries');
+            if (addEntries && addEntries.entries) {
+                const c = addEntries.entries.find((e: any) => e.entryId.startsWith('cursor-bottom'));
+                if (c) nextCursor = c.content?.value || c.content?.itemContent?.value;
+            }
+
+            // Nếu không có cursor mới hoặc trùng cũ -> Hết data
+            if (!nextCursor || nextCursor === replyCursor) break;
+            replyCursor = nextCursor;
+
+            if (i < MAX_REPLY_BATCHES - 1) {
+                await sleep(500); 
+            }
+
+        } catch (e) {
+            console.error('[API] Error fetching replies loop:', e);
+            break;
+        }
+    }
+
+    return { profile, tweets: allTweetsRaw, pinnedTweet: pinnedTweetRaw, reply: allReplies };
 }
 
 
 export async function fetchVipConnections(userName: string) {
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': RAPIDAPI_KEY,
-            'x-rapidapi-host': API_HOST
-        }
-    };
-
     try {
         // 1. Lấy danh sách ID đang follow (Lấy 200 thằng thôi cho nhanh)
         // API: Get User Following IDs
-        const idsRes = await fetch(`https://${API_HOST}/following-ids?username=${userName}&count=100`, options);
+        const idsRes = await fetch(`https://${API_HOST}/following-ids?username=${userName}&count=200`, fetchOptions);
         if (!idsRes.ok) return [];
 
         const idsData = await idsRes.json();
@@ -286,7 +349,7 @@ export async function fetchVipConnections(userName: string) {
             const idsStr = chunk.join(',');
             try {
                 // Gọi API
-                const res = await fetch(`https://${API_HOST}/get-users?users=${idsStr}`, options);
+                const res = await fetch(`https://${API_HOST}/get-users?users=${idsStr}`, fetchOptions);
                 const data = await res.json();
 
                 // Gom dữ liệu

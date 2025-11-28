@@ -33,34 +33,48 @@ function calculateGrade(er: number) {
 
 
 // [!code update] Hàm analyzeReplyStrategy đã lược bỏ BIG_ACCOUNTS
-function analyzeReplyStrategy(replies: any[], originalHandle: string) {
-    // Guard clause
+function analyzeReplyStrategy(replies: ReplyTweet[], originalHandle: string) {
+    // Guard clause: Nếu không có reply nào
     if (!replies || replies.length === 0) {
         return {
             replyCount: 0,
             avgLength: 0,
-            archetype: "N/A",
-            metrics: { spamScore: 0, valueScore: 0, neutralScore: 0 }, // [!code ++] Thêm neutralScore
+            archetype: "Ghost", // Không tương tác bao giờ
+            metrics: { spamScore: 0, valueScore: 0, neutralScore: 0 },
             topTargets: []
         };
     }
 
-    let shortReplies = 0;      // < 40 ký tự (Tăng ngưỡng lên chút)
-    let valueReplies = 0;      // > 80 ký tự (Chuẩn cao hơn cho Value)
-    let neutralReplies = 0;    // 40 - 80 ký tự
-    let linkReplies = 0;       // Có link
+    let shortReplies = 0;      // < 40 ký tự (Spam/Emoji/Low effort)
+    let valueReplies = 0;      // > 80 ký tự (Tâm huyết, trao giá trị)
+    let neutralReplies = 0;    // 40 - 80 ký tự (Bình thường)
+    let linkReplies = 0;       // Có chứa link (Thường là shill/bán hàng)
     let totalLen = 0;
     
+    // Map để đếm tần suất tương tác với từng người
     const replyTargetMap: Record<string, { count: number; avatar: string; handle: string }> = {};
+    
+    // Biến đếm reply người ngoài (Real Engagement) - QUAN TRỌNG
+    let outboundRepliesCount = 0;
+
+    const cleanHandle = originalHandle.replace('@', '').toLowerCase();
 
     replies.forEach(t => {
+        // 1. LỌC NHIỄU: Bỏ qua Self-Reply (Tự reply chính mình = Thread/Bổ sung ý)
+        // Những cái này không tính là "đi ngoại giao"
+        const targetHandle = t.replyTo?.authorHandle?.toLowerCase() || "";
+        if (targetHandle === cleanHandle) return; 
+
+        // --- Từ đây trở xuống là reply người khác ---
+        outboundRepliesCount++;
+
         const text = t.text || "";
         const len = text.length;
         totalLen += len;
 
         if (t.outboundLinks && t.outboundLinks.length > 0) linkReplies++;
 
-        // [!code fix] Logic phân loại mới: Phủ kín 100% trường hợp
+        // 2. PHÂN LOẠI CHẤT LƯỢNG
         if (len < 40) {
             shortReplies++;
         } else if (len >= 80) {
@@ -69,49 +83,57 @@ function analyzeReplyStrategy(replies: any[], originalHandle: string) {
             neutralReplies++;
         }
 
-        // Phân tích đối tượng (giữ nguyên)
-        const target = t.replyTo; 
-        if (target && target.authorHandle) {
-            const handle = target.authorHandle;
-            if (handle.toLowerCase() !== originalHandle.toLowerCase()) {
-                if (!replyTargetMap[handle]) {
-                    replyTargetMap[handle] = { 
-                        count: 0, 
-                        avatar: target.authorAvatar || "", 
-                        handle: handle 
-                    };
-                }
-                replyTargetMap[handle].count++;
+        // 3. ĐẾM TARGET (Hay tương tác với ai?)
+        if (targetHandle) {
+            if (!replyTargetMap[targetHandle]) {
+                replyTargetMap[targetHandle] = { 
+                    count: 0, 
+                    avatar: t.replyTo.authorAvatar || "", 
+                    handle: t.replyTo.authorHandle 
+                };
             }
+            replyTargetMap[targetHandle].count++;
         }
     });
 
-    const count = replies.length;
-    const avgLength = Math.round(totalLen / count);
+    // Nếu toàn tự reply mình (viết thread) mà không đi comment dạo
+    if (outboundRepliesCount === 0) {
+        return {
+            replyCount: 0,
+            avgLength: 0,
+            archetype: "Lone Wolf", // Sói cô độc (Chỉ đăng bài, không tương tác)
+            metrics: { spamScore: 0, valueScore: 0, neutralScore: 0 },
+            topTargets: []
+        };
+    }
+
+    const avgLength = Math.round(totalLen / outboundRepliesCount);
     
+    // Sắp xếp top những người hay đi comment dạo nhất
     const topTargets = Object.values(replyTargetMap)
         .sort((a, b) => b.count - a.count)
         .slice(0, 12);
 
-    // Định danh tính cách
-    let archetype = "Conversationalist"; 
-    const linkRatio = linkReplies / count;
-    const shortRatio = shortReplies / count;
-    const valueRatio = valueReplies / count;
+    // 4. ĐỊNH DANH TÍNH CÁCH (ARCHETYPE)
+    let archetype = "Connector"; 
+    const linkRatio = linkReplies / outboundRepliesCount;
+    const shortRatio = shortReplies / outboundRepliesCount;
+    const valueRatio = valueReplies / outboundRepliesCount;
 
-    if (linkRatio > 0.2) archetype = "Plugger / Spammer"; // > 20% reply có link
-    else if (shortRatio > 0.6) archetype = "NPC / Bot";   // > 60% reply ngắn
-    else if (valueRatio > 0.4) archetype = "Value Builder"; // > 40% reply dài
-    else archetype = "Supporter"; // Chủ yếu là neutral
+    if (linkRatio > 0.15) archetype = "Shiller";          // Hay thả link spam bán tool
+    else if (shortRatio > 0.7) archetype = "Reply Guy";   // Toàn "Agree", "Nice", "Lol" lấy fame
+    else if (valueRatio > 0.5) archetype = "Value Builder"; // Comment dài, tâm huyết
+    else if (topTargets.length < 3 && outboundRepliesCount > 10) archetype = "Simp"; // Chỉ reply đúng 1-2 người (Fan cuồng)
+    else archetype = "Networker"; // Cân bằng, đi giao lưu rộng
 
     return {
-        replyCount: count,
+        replyCount: outboundRepliesCount,
         avgLength,
         archetype,
         metrics: {
-            spamScore: Math.round((shortReplies / count) * 100),
-            valueScore: Math.round((valueReplies / count) * 100),
-            neutralScore: Math.round((neutralReplies / count) * 100)
+            spamScore: Math.round((shortReplies / outboundRepliesCount) * 100),
+            valueScore: Math.round((valueReplies / outboundRepliesCount) * 100),
+            neutralScore: Math.round((neutralReplies / outboundRepliesCount) * 100)
         },
         topTargets 
     };

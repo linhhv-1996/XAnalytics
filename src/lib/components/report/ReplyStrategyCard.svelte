@@ -32,10 +32,10 @@
 
 <div class="card-soft p-0 h-full flex flex-col sm:flex-row overflow-hidden min-h-[280px]"> 
     
-    <div class="w-full sm:w-[55%] p-5 sm:p-6 flex flex-col justify-between bg-white z-10 relative border-b sm:border-b-0 sm:border-r border-slate-100">
+    <div class="w-full sm:w-[55%] p-4 flex flex-col justify-between bg-white z-10 relative border-b sm:border-b-0 sm:border-r border-slate-100">
         
         <div class="flex items-center gap-2.5 text-slate-700 mb-4 sm:mb-0">
-            <h3 class="text-[11px] font-semibold uppercase flex items-center gap-2 tracking-[0.14em] text-slate-700">
+            <h3 class="text-[11px] font-semibold uppercase flex items-center gap-2 tracking-[0.14em] text-slate-700 mb-3">
                 <i class="fa-solid fa-reply-all text-[11px] text-slate-400"></i> Reply Strategy
             </h3>
         </div>

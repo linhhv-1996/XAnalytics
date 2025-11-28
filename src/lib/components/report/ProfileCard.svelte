@@ -1,6 +1,11 @@
 <script lang="ts">
     import type { AnalyticsData } from '$lib/types';
+    import { createEventDispatcher } from 'svelte';
+
+
     export let profile: AnalyticsData['profile'];
+
+    const dispatch = createEventDispatcher();
 </script>
 
 <div class="space-y-4">
@@ -27,6 +32,17 @@
                 <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.followers}</div><div class="text-[10px] uppercase tracking-wide text-slate-500">Followers</div></div>
                 <div><div class="text-[13px] font-mono font-semibold text-slate-900">{profile.tweetsCount}</div><div class="text-[10px] uppercase tracking-wide text-slate-500">Posts</div></div>
             </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100">
+                <button 
+                    on:click={() => dispatch('openRelationship')}
+                    class="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all text-[11px] font-bold uppercase tracking-wider group"
+                >
+                    <i class="fa-solid fa-fingerprint text-indigo-500 group-hover:scale-110 transition-transform"></i>
+                    <span>Check Relationship with You</span>
+                </button>
+            </div>
+
         </div>
     </div>
 </div>

@@ -16,9 +16,7 @@
     import RecentActivityCard from '$lib/components/report/RecentActivityCard.svelte';
     import NetworkRadarCard from '$lib/components/report/NetworkRadarCard.svelte';
     import TrafficFlowCard from '$lib/components/report/TrafficFlowCard.svelte';
-    import NewFeaturesMockup from '$lib/components/report/NewFeaturesMockup.svelte';
-    import AudienceOverlapCard from '$lib/components/report/AudienceOverlapCard.svelte';
-    import PersonalInteractionsCard from '$lib/components/report/PersonalInteractionsCard.svelte';
+    import RelationshipModal from '$lib/components/report/RelationshipModal.svelte';
 
     // State
     let analyticsData: any = null;
@@ -26,6 +24,7 @@
     let errorMsg = "";
     let searchTerm = "";
     let activeHandle = "";
+    let showRelationshipModal = false;
 
     // Reactive: Tự động chạy khi URL thay đổi
     $: if ($page.params.handle && $page.params.handle !== activeHandle) {
@@ -163,7 +162,9 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-5 items-start animate-fade-in-up">
         <div class="space-y-4">
-            <ProfileCard profile={analyticsData.profile} />
+            <ProfileCard profile={analyticsData.profile} on:openRelationship={() => showRelationshipModal = true}/>
+
+
             <RecentActivityCard heatmap={analyticsData.habits.heatmap} />
             <BestTimeChart habits={analyticsData.habits} />
 
@@ -199,10 +200,19 @@
                 myHandle={analyticsData.profile.handle} 
              />
 
+             
             <!-- <AudienceOverlapCard targetHandle="elonMusk" />
             <PersonalInteractionsCard targetHandle="elonMusk"/> -->
             
         </div>
     </div>
+
+    <RelationshipModal 
+    isOpen={showRelationshipModal} 
+    targetHandle={analyticsData.profile.handle}
+    on:close={() => showRelationshipModal = false}
+/>
+
 </div>
 {/if}
+

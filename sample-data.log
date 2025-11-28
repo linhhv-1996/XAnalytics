@@ -1,0 +1,753 @@
+{
+  "profile": {
+    "handle": "@JoshuaIPark",
+    "name": "Joshua. I Park",
+    "bio": "ex-circuit designer → Startup Founder 👨‍💻\nScaling my biz to $10M valuation 🎯\nLove people 🌍 and food 🍽️\nDocumenting my whole journey ⚡️\n@Mem_base @get_sabo",
+    "avatarUrl": "https://pbs.twimg.com/profile_images/1981555429428658176/wQyxDdBE_normal.jpg",
+    "banner": "https://pbs.twimg.com/profile_banners/1953636806068776963/1763289136",
+    "followers": "2.5K",
+    "following": "793",
+    "tweetsCount": "2.8K",
+    "engagement": "1.02%",
+    "viralRatio": "1:6",
+    "grade": "B"
+  },
+  "overview": {
+    "totalEngagement": 3918,
+    "avgEngagementRate": 1.02,
+    "viralRate": 16.7
+  },
+  "contentStrategy": {
+    "threadRatio": 17,
+    "visualRatio": 75,
+    "promoRatio": 8,
+    "monetization": {
+      "valueCount": 11,
+      "promoCount": 1,
+      "valueRatio": 92,
+      "promoRatio": 8,
+      "frequency": "Sells every ~12 posts"
+    },
+    "length": {
+      "short": {
+        "count": 3,
+        "totalViews": 251579,
+        "avgViews": 83860,
+        "score": 40.3
+      },
+      "medium": {
+        "count": 6,
+        "totalViews": 12593,
+        "avgViews": 2099,
+        "score": 1
+      },
+      "long": {
+        "count": 3,
+        "totalViews": 120108,
+        "avgViews": 40036,
+        "score": 19.3
+      },
+      "bestType": "Short"
+    }
+  },
+  "funnel": {
+    "viewToLike": 0.8,
+    "viewToReply": 0.13,
+    "viewToFan": 0.21
+  },
+  "topContent": {
+    "mostViral": {
+      "id": "1993554406684709127",
+      "type": "single",
+      "text": "Oops, they just killed TrustMRR😂",
+      "createdAt": "Wed Nov 26 05:36:23 +0000 2025",
+      "views": 247935,
+      "likes": 1756,
+      "retweets": 21,
+      "replies": 143,
+      "bookmarks": 210,
+      "isReply": false,
+      "hasMedia": false,
+      "mediaType": "none",
+      "url": "https://x.com/JoshuaIPark/status/1993554406684709127",
+      "outboundLinks": [],
+      "hashtags": [],
+      "mentions": [],
+      "threadChildren": []
+    },
+    "mostDiscussion": {
+      "id": "1993554406684709127",
+      "type": "single",
+      "text": "Oops, they just killed TrustMRR😂",
+      "createdAt": "Wed Nov 26 05:36:23 +0000 2025",
+      "views": 247935,
+      "likes": 1756,
+      "retweets": 21,
+      "replies": 143,
+      "bookmarks": 210,
+      "isReply": false,
+      "hasMedia": false,
+      "mediaType": "none",
+      "url": "https://x.com/JoshuaIPark/status/1993554406684709127",
+      "outboundLinks": [],
+      "hashtags": [],
+      "mentions": [],
+      "threadChildren": []
+    },
+    "hiddenGem": null,
+    "list": [
+      {
+        "text": "Oops, they just killed TrustMRR😂",
+        "views": "248K",
+        "likes": "1.8K",
+        "replies": "143",
+        "date": "Nov 26",
+        "url": "https://x.com/JoshuaIPark/status/1993554406684709127"
+      },
+      {
+        "text": "We received $6.5K credit from @claudeai🚀 https://t.co/KQQR6sEFA1",
+        "views": "118K",
+        "likes": "822",
+        "replies": "114",
+        "date": "Nov 27",
+        "url": "https://x.com/JoshuaIPark/status/1993929888353669375"
+      },
+      {
+        "text": "Damn, we made another sale on @get_sabo!!🎉\n\nThat's $348 total in just one week.\n\nIt's a real organic customer, so it means a lot to us.🥹 https://t.co/NfCHW24BKX",
+        "views": "4.4K",
+        "likes": "124",
+        "replies": "55",
+        "date": "Nov 27",
+        "url": "https://x.com/JoshuaIPark/status/1994046600377979060"
+      }
+    ]
+  },
+  "network": {
+    "topMentions": [
+      {
+        "handle": "get_sabo",
+        "count": 4
+      },
+      {
+        "handle": "claudeai",
+        "count": 2
+      },
+      {
+        "handle": "marclou",
+        "count": 1
+      },
+      {
+        "handle": "polar_sh",
+        "count": 1
+      },
+      {
+        "handle": "getRewardful",
+        "count": 1
+      }
+    ],
+    "vipFollowing": [
+      {
+        "handle": "figma",
+        "name": "Figma",
+        "avatar": "https://pbs.twimg.com/profile_images/1950251644467490817/MiHVMqAM_normal.jpg",
+        "description": "Nano Banana Pro pro",
+        "followers": 522331,
+        "isVerified": true
+      },
+      {
+        "handle": "stripe",
+        "name": "Stripe",
+        "avatar": "https://pbs.twimg.com/profile_images/1970187852572250113/hhDZmj7w_normal.jpg",
+        "description": "Stripe builds programmable financial services. Help: @stripesupport. Read: @stripepress @WorksInProgMag. Status: @stripestatus.",
+        "followers": 265653,
+        "isVerified": false
+      },
+      {
+        "handle": "claudeai",
+        "name": "Claude",
+        "avatar": "https://pbs.twimg.com/profile_images/1950950107937185792/QOfEjFoJ_normal.jpg",
+        "description": "Claude is an AI assistant built by @anthropicai to be safe, accurate, and secure. Talk to Claude on https://t.co/ZhTwG8dz3D or download the app.",
+        "followers": 186364,
+        "isVerified": true
+      },
+      {
+        "handle": "sambetesh",
+        "name": "Sam Betesh",
+        "avatar": "https://pbs.twimg.com/profile_images/1965770586069594112/OvEq2s7Y_normal.jpg",
+        "description": "Building the source of truth for how to grow your startup (after doing growth for ~200 startups)",
+        "followers": 117400,
+        "isVerified": true
+      },
+      {
+        "handle": "v0",
+        "name": "v0",
+        "avatar": "https://pbs.twimg.com/profile_images/1955397769138667520/XoWT5Huy_normal.jpg",
+        "description": "Full stack vibe coding platform. Created by @vercel.",
+        "followers": 103532,
+        "isVerified": true
+      },
+      {
+        "handle": "MehulFanawala",
+        "name": "Mehul Fanawala",
+        "avatar": "https://pbs.twimg.com/profile_images/1748291747778854913/litCA3hZ_normal.jpg",
+        "description": "Co-founded https://t.co/lhzcpkmbln and https://t.co/KIusD9PEvz with @TheWriterWoman_ | Strategic Advisor at https://t.co/GIw6I6aSzg",
+        "followers": 43893,
+        "isVerified": true
+      },
+      {
+        "handle": "stitchbygoogle",
+        "name": "Stitch by Google",
+        "avatar": "https://pbs.twimg.com/profile_images/1924895422327463936/V991NnhE_normal.jpg",
+        "description": "Stitch by @GoogleLabs turns your ideas into beautiful interface designs, powered by some of the latest Gemini models. Try free of charge.",
+        "followers": 42640,
+        "isVerified": true
+      },
+      {
+        "handle": "stevejang",
+        "name": "steve jang",
+        "avatar": "https://pbs.twimg.com/profile_images/1636919451890118656/X34CSp6D_normal.jpg",
+        "description": "entrepreneur, now vc | founder & partner @kindredventures | early investor 🌱 @uber @coinbase @perplexity_ai @fal @nuro @playAIofficial @whisperaero @zora",
+        "followers": 42153,
+        "isVerified": true
+      },
+      {
+        "handle": "AdamFard_",
+        "name": "Adam Fard",
+        "avatar": "https://pbs.twimg.com/profile_images/1596216672813305859/Dn-c-LiZ_normal.jpg",
+        "description": "Building @uxpilotai - the future beyond Figma",
+        "followers": 26662,
+        "isVerified": true
+      }
+    ]
+  },
+  "topics": {
+    "list": [
+      {
+        "text": "Followers",
+        "count": 3,
+        "type": "keyword"
+      },
+      {
+        "text": "Today",
+        "count": 3,
+        "type": "keyword"
+      },
+      {
+        "text": "Crossed",
+        "count": 3,
+        "type": "keyword"
+      },
+      {
+        "text": "Another",
+        "count": 3,
+        "type": "keyword"
+      },
+      {
+        "text": "Claude",
+        "count": 3,
+        "type": "keyword"
+      },
+      {
+        "text": "Building",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Public",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Received",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Credit",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Damn",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Made",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Sale",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Thats",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Total",
+        "count": 2,
+        "type": "keyword"
+      },
+      {
+        "text": "Week",
+        "count": 2,
+        "type": "keyword"
+      }
+    ]
+  },
+  "traffic": {
+    "topDomains": [
+      {
+        "domain": "anthropic.com",
+        "count": 1
+      }
+    ]
+  },
+  "habits": {
+    "bestHour": "5:00",
+    "bestHourMetric": "125K avg views",
+    "postingSchedule": [],
+    "heatmap": [
+      {
+        "date": "Oct 25",
+        "fullDate": "2025-10-25",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 26",
+        "fullDate": "2025-10-26",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 27",
+        "fullDate": "2025-10-27",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 28",
+        "fullDate": "2025-10-28",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 29",
+        "fullDate": "2025-10-29",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 30",
+        "fullDate": "2025-10-30",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Oct 31",
+        "fullDate": "2025-10-31",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 1",
+        "fullDate": "2025-11-01",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 2",
+        "fullDate": "2025-11-02",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 3",
+        "fullDate": "2025-11-03",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 4",
+        "fullDate": "2025-11-04",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 5",
+        "fullDate": "2025-11-05",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 6",
+        "fullDate": "2025-11-06",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 7",
+        "fullDate": "2025-11-07",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 8",
+        "fullDate": "2025-11-08",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 9",
+        "fullDate": "2025-11-09",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 10",
+        "fullDate": "2025-11-10",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 11",
+        "fullDate": "2025-11-11",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 12",
+        "fullDate": "2025-11-12",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 13",
+        "fullDate": "2025-11-13",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 14",
+        "fullDate": "2025-11-14",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 15",
+        "fullDate": "2025-11-15",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 16",
+        "fullDate": "2025-11-16",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 17",
+        "fullDate": "2025-11-17",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 18",
+        "fullDate": "2025-11-18",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 19",
+        "fullDate": "2025-11-19",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 20",
+        "fullDate": "2025-11-20",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 21",
+        "fullDate": "2025-11-21",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 22",
+        "fullDate": "2025-11-22",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 23",
+        "fullDate": "2025-11-23",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 24",
+        "fullDate": "2025-11-24",
+        "count": 0,
+        "level": 0
+      },
+      {
+        "date": "Nov 25",
+        "fullDate": "2025-11-25",
+        "count": 3,
+        "level": 2
+      },
+      {
+        "date": "Nov 26",
+        "fullDate": "2025-11-26",
+        "count": 4,
+        "level": 3
+      },
+      {
+        "date": "Nov 27",
+        "fullDate": "2025-11-27",
+        "count": 4,
+        "level": 3
+      },
+      {
+        "date": "Nov 28",
+        "fullDate": "2025-11-28",
+        "count": 4,
+        "level": 3
+      }
+    ],
+    "hourlyPerf": [
+      {
+        "hour": 0,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 1,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 2,
+        "avgViews": 0,
+        "postCount": 1,
+        "score": 0
+      },
+      {
+        "hour": 3,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 4,
+        "avgViews": 952,
+        "postCount": 1,
+        "score": 1
+      },
+      {
+        "hour": 5,
+        "avgViews": 125280,
+        "postCount": 2,
+        "score": 100
+      },
+      {
+        "hour": 6,
+        "avgViews": 59998,
+        "postCount": 2,
+        "score": 48
+      },
+      {
+        "hour": 7,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 8,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 9,
+        "avgViews": 0,
+        "postCount": 1,
+        "score": 0
+      },
+      {
+        "hour": 10,
+        "avgViews": 922,
+        "postCount": 1,
+        "score": 1
+      },
+      {
+        "hour": 11,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 12,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 13,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 14,
+        "avgViews": 4440,
+        "postCount": 1,
+        "score": 4
+      },
+      {
+        "hour": 15,
+        "avgViews": 1708,
+        "postCount": 2,
+        "score": 1
+      },
+      {
+        "hour": 16,
+        "avgViews": 3995,
+        "postCount": 1,
+        "score": 3
+      },
+      {
+        "hour": 17,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 18,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 19,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 20,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 21,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 22,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      },
+      {
+        "hour": 23,
+        "avgViews": 0,
+        "postCount": 0,
+        "score": 0
+      }
+    ]
+  },
+  "baseline": {
+    "views": 2079,
+    "likes": 60.5,
+    "engagement": 3.34,
+    "viralRate": 16.7,
+    "viewsScore": 1,
+    "likesScore": 3,
+    "engagementScore": 46,
+    "viralScore": 83.5
+  },
+  "signal": {
+    "title": "Pin Tweet",
+    "type": "Breakout Post",
+    "text": "I just crossed 2K followers!! 🎉\n\nStarted building in public 27 days ago:\n0 → 300: 5 days\n300 → 500: 5 days\n500 → 1000: 5 days\n1000 → 2000: 12 days\n\nHuge appreciation to all my supporters.🫶\n8K more for the next milestone.🔥 https://t.co/ZsFiPnPRp6",
+    "createdAt": "Nov 14, 2025",
+    "likes": "332",
+    "replies": "102",
+    "views": "19K",
+    "multiplier": "9.3×",
+    "url": "https://x.com/JoshuaIPark/status/1989374831503212609",
+    "hasMedia": true,
+    "mediaType": "image"
+  },
+  "replyStrategy": {
+    "replyCount": 10,
+    "avgLength": 69,
+    "archetype": "Networker",
+    "metrics": {
+      "spamScore": 30,
+      "valueScore": 10,
+      "neutralScore": 60
+    },
+    "topTargets": [
+      {
+        "count": 2,
+        "avatar": "https://pbs.twimg.com/profile_images/1888648713767092224/gBBnuw4y_normal.jpg",
+        "handle": "joncphillips"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1581409751564316673/EmlXTpT-_normal.jpg",
+        "handle": "ericbahn"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1755448801957945344/Fh2HNw5Y_normal.jpg",
+        "handle": "nikitabier"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1993721609895727104/Y4cLrx5S_normal.jpg",
+        "handle": "Jord_Cog"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1992885760396013568/XwZNd13t_normal.jpg",
+        "handle": "vuhrmeister"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1987016845493239808/RlvCELi3_normal.jpg",
+        "handle": "zalimidis"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1989405229935206400/EBq2u7HU_normal.jpg",
+        "handle": "Teea2zy"
+      },
+      {
+        "count": 1,
+        "avatar": "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png",
+        "handle": "OpenPsychic"
+      },
+      {
+        "count": 1,
+        "avatar": "https://pbs.twimg.com/profile_images/1988319344158535682/Pi4T5eC9_normal.jpg",
+        "handle": "georgecurtiss"
+      }
+    ]
+  }
+}

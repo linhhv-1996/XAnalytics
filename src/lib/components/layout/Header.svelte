@@ -17,22 +17,24 @@
 <nav class="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-md backdrop-saturate-150 border-b border-slate-200/60 transition-all duration-300 supports-[backdrop-filter]:bg-white/60">
   <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
     
-    <a href="/" class="flex items-center gap-3 cursor-pointer group select-none">
-        <div class="relative">
-            <div class="absolute -inset-1 bg-gradient-to-tr from-emerald-500 to-cyan-500 rounded-xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
-            <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-white shadow-sm ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-300">
-              <i class="fa-solid fa-bolt text-sm"></i>
+    <div class="flex items-center gap-6">
+        <a href="/" class="flex items-center gap-3 cursor-pointer group select-none">
+            <div class="relative">
+                <div class="absolute -inset-1 bg-gradient-to-tr from-emerald-500 to-cyan-500 rounded-xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
+                <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-white shadow-sm ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-300">
+                  <i class="fa-solid fa-bolt text-sm"></i>
+                </div>
             </div>
-        </div>
-        <div class="flex flex-col leading-none gap-0.5">
-          <span class="text-[16px] font-bold tracking-tight text-slate-900 group-hover:text-black transition-colors">
-            Pattern<span class="text-slate-500 font-semibold group-hover:text-slate-700">Decoder</span>
-          </span>
-          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 group-hover:text-emerald-600 transition-colors">
-            Creator Intelligence
-          </span>
-        </div>
-    </a>
+            <div class="flex flex-col leading-none gap-0.5">
+              <span class="text-[16px] font-bold tracking-tight text-slate-900 group-hover:text-black transition-colors">
+                Pattern<span class="text-slate-500 font-semibold group-hover:text-slate-700">Decoder</span>
+              </span>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 group-hover:text-emerald-600 transition-colors">
+                Creator Intelligence
+              </span>
+            </div>
+        </a>
+    </div>
 
     <div class="flex items-center">
       {#if user}
@@ -55,6 +57,10 @@
                 <p class="text-[11px] text-slate-500 truncate font-mono mt-0.5">{user.email || user.name}</p>
               </div>
               
+              <a href="/compare" class="md:hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-code-compare text-slate-400"></i> Compare Profiles
+              </a>
+
               <button on:click={handleLogout} type="button" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center justify-between">
                 <span>Sign out</span>
                 <i class="fa-solid fa-arrow-right-from-bracket opacity-70"></i>

@@ -225,6 +225,7 @@ export interface ReplyTweet {
     replies: number;
     retweets: number;
     views: number;
+    outboundLinks: string[];
 
     // Context (Reply ai, bài gốc nội dung gì)
     replyTo: ReplyContext;
